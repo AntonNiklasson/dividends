@@ -1,52 +1,89 @@
 ---
-description: Pick up the next task from IMPLEMENTATION_PLAN.md, implement it, and commit
+description: Pick up the next task from the implementation plan, implement it, and commit
 ---
 
 # Implement Next Task
 
-You are implementing a task from the implementation plan. Follow these steps carefully:
+You are implementing a task from the Dividend Portfolio Projector implementation plan. Follow these steps carefully.
 
-## Step 1: Read the Implementation Plan
+## Step 1: Read the PRD for Context
 
-Read the `IMPLEMENTATION_PLAN.md` file in the repository root. This file contains a list of tasks with checkboxes:
-- `[ ]` = incomplete task
-- `[x]` = completed task
+First, read `dividend-projector-prd.md` to understand what you're building. This is a web app that:
+- Accepts CSV uploads (Avanza export format)
+- Fetches dividend data from Yahoo Finance
+- Projects 3-year dividend income with DRIP reinvestment
+- Uses Next.js, TypeScript, Tailwind, shadcn/ui, Jotai
 
-## Step 2: Identify the Next Task
+## Step 2: Find the Next Task
 
-Find the **first incomplete task** (marked with `[ ]`). This is the task you will implement.
+Read `dividend-projector-implementation-plan.md` and go to the **Progress Tracking** section at the bottom. Find the **first unchecked task** (marked with `- [ ]`).
 
-If all tasks are complete, inform the user that there are no remaining tasks.
+If all tasks are complete, inform the user and exit.
 
-## Step 3: Implement the Task
+## Step 3: Get Task Details
 
-Carefully implement the task according to its description. This may involve:
-- Creating new files
-- Modifying existing files
-- Adding dependencies
-- Writing tests
+The Progress Tracking section shows task names like:
+```
+- [ ] Phase 1: Initialize Next.js project
+```
 
-Follow best practices and ensure your implementation is complete and correct.
+Find the corresponding **Phase section** earlier in the document for full instructions. For example, "Phase 1" details are under the heading `### Phase 1: Initialize Next.js project`.
 
-## Step 4: Update the Implementation Plan
+Each phase includes:
+- Bullet points with specific steps
+- A suggested commit message (after "Commit:")
 
-After successfully implementing the task:
-1. Mark the task as complete by changing `[ ]` to `[x]`
-2. Keep all other content in the file unchanged
+## Step 4: Implement the Task
 
-## Step 5: Commit the Changes
+Execute all steps described in the phase. This may involve:
+- Running shell commands (npm, npx, etc.)
+- Creating/modifying files
+- Installing dependencies
+- Writing code
 
-Create a git commit with all changes including:
-- The implemented code/files
-- The updated IMPLEMENTATION_PLAN.md
+**Important:**
+- Follow the PRD's tech stack and patterns
+- For shadcn components, use `npx shadcn@latest add <component>`
+- Verify your changes work (run dev server, tests, etc.)
+- Don't skip steps or leave things partially done
 
-Use a clear, descriptive commit message that references the task you completed.
+## Step 5: Mark Task Complete
 
-Format: `feat: <brief description of what was implemented>`
+In `dividend-projector-implementation-plan.md`, find the task in the **Progress Tracking** section and change `- [ ]` to `- [x]`.
 
-## Important Notes
+## Step 6: Verify Linting and Formatting
 
-- Only implement ONE task per invocation
-- Be thorough - fully complete the task before marking it done
-- If you encounter blockers or questions, stop and ask the user rather than guessing
-- Always verify your changes work before committing
+Before committing, if the project has linting/formatting set up (after phases 4-5):
+
+1. Run `npm run lint` (or `npm run lint:fix`) - fix any errors
+2. Run `npm run format` (if available) - ensure consistent formatting
+
+All code must pass linting and formatting checks. Fix issues before proceeding.
+
+## Step 7: Commit
+
+Stage all changes and commit with the suggested message from the phase, or a similar descriptive message.
+
+Format: The phase usually suggests something like `Commit: "Initialize Next.js project with TypeScript"`
+
+Use that as your commit message, prefixed appropriately:
+- `feat:` for new features
+- `chore:` for setup/config
+- `test:` for tests
+- `fix:` for fixes
+
+Example: `chore: Initialize Next.js project with TypeScript`
+
+Include the co-author:
+```
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+```
+
+## Rules
+
+1. **One task per run** - Only implement the single next task
+2. **Be thorough** - Complete everything in the phase before marking done
+3. **Verify before committing** - Make sure it works
+4. **Lint and format must pass** - After phase 5, always run lint/format checks before committing
+5. **Don't guess** - If something is unclear or blocked, stop and report the issue rather than making assumptions
+6. **Stay focused** - Don't refactor other code or add unrequested features
