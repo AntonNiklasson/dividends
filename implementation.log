@@ -540,3 +540,25 @@ Time: Mon Jan 12 19:59:48 CET 2026
 Remaining tasks: 30
 Next task: Phase 30: Define projection types
 Attempt 1...
+Perfect! Phase 31 completed and committed. 
+
+## Summary
+
+✅ **Phase 31: Implement basic projection (no DRIP)** - Complete
+
+Created `src/lib/calculateProjection.ts` with:
+- `calculateProjection()` - Main function for 2026 projections
+- `projectYear()` - Helper to project single year dividends
+- Skips stocks without dividend history
+- Calculates dividends as shares × dividend amount (no reinvestment yet)
+- Aggregates totals by month and currency
+- Returns structured ProjectionResponse
+
+Next task: **Phase 32: Extend projection to 3 years**
+Commit created: e8c8fa2 feat: Implement basic dividend projection
+
+=== Attempting task 29 of 59 ===
+Time: Mon Jan 12 20:00:41 CET 2026
+Remaining tasks: 28
+Next task: Phase 32: Extend projection to 3 years
+Attempt 1...
