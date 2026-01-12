@@ -7,18 +7,20 @@ import {
 } from './types';
 
 /**
- * Calculate dividend projections for 2026 without DRIP reinvestment
+ * Calculate dividend projections for 2026-2028 without DRIP reinvestment
  */
 export function calculateProjection(
   stocks: StockWithDividends[]
 ): ProjectionResponse {
-  // Initialize projection structure for 2026 only (no DRIP, single year for now)
+  // Project dividends for 3 years (no DRIP, so each year is identical)
   const year2026 = projectYear(stocks, 2026);
+  const year2027 = projectYear(stocks, 2027);
+  const year2028 = projectYear(stocks, 2028);
 
   return {
     2026: year2026,
-    2027: { months: [], yearTotal: {} }, // Placeholder
-    2028: { months: [], yearTotal: {} }, // Placeholder
+    2027: year2027,
+    2028: year2028,
   };
 }
 
