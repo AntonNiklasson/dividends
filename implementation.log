@@ -390,3 +390,38 @@ Time: Mon Jan 12 19:49:14 CET 2026
 Remaining tasks: 36
 Next task: Phase 24: Add API error handling
 Attempt 1...
+Excellent! Phase 24 is complete. 
+
+## Summary
+
+**Phase 24: Add API error handling** ✅
+
+Implemented comprehensive structured error handling for the analyze API route:
+
+**Changes:**
+- Created `createErrorResponse()` helper for consistent error responses with proper HTTP status codes
+- Added input validation for:
+  - File presence (400)
+  - File type/format (400)
+  - File extension (.csv only) (400)
+  - File size (5MB limit, 413)
+  - Empty files (400)
+  - File reading errors (400)
+- Added structured try-catch for CSV parsing errors (400)
+- Added catch-all error handling with logging (500)
+- Ensured all error responses follow `AnalyzeResponse` type structure
+
+**Status codes implemented:**
+- 200: Success
+- 400: Client errors (validation, parsing)
+- 413: Payload too large
+- 500: Server errors
+
+All linting and formatting checks pass. Task committed to git.
+Commit created: 6133da6 feat: Add structured API error handling
+
+=== Attempting task 23 of 59 ===
+Time: Mon Jan 12 19:50:32 CET 2026
+Remaining tasks: 35
+Next task: Phase 25: Create fetchDividends function
+Attempt 1...
