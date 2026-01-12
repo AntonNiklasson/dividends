@@ -617,3 +617,42 @@ Time: Mon Jan 12 20:03:02 CET 2026
 Remaining tasks: 26
 Next task: Phase 34: Aggregate by month
 Attempt 1...
+Perfect! **Phase 35 complete**. 
+
+Summary:
+- ✅ Created comprehensive test suite with 14 tests covering:
+  - Basic projection with single/quarterly dividends
+  - Stocks with no dividend history
+  - DRIP reinvestment & compounding
+  - Intra-year compounding
+  - Multiple currencies
+  - Multi-year compounding across 2026-2028
+  - Independent share tracking per stock
+  - Edge cases (empty list, fractional shares, date sorting, mixed portfolios)
+- ✅ All tests passing (14/14)
+- ✅ Linting passed
+- ✅ Committed with appropriate message
+
+Next task: Phase 36 - Integrate projection into API
+Commit created: a74f07e test: Add unit tests for projection calculations
+
+=== Attempting task 32 of 59 ===
+Time: Mon Jan 12 20:04:52 CET 2026
+Remaining tasks: 24
+Next task: Phase 36: Integrate projection into API
+Attempt 1...
+Phase 36 complete. The projection engine is now integrated into the API route:
+
+**Changes:**
+- Imported `calculateProjection` function
+- Called it with successful dividend stock data
+- Included full 3-year projection in API response
+
+The `/api/analyze` endpoint now returns complete portfolio analysis with projections for 2026-2028 including DRIP reinvestment calculations.
+Commit created: 838ad7b feat: Integrate projection engine into API route
+
+=== Attempting task 33 of 59 ===
+Time: Mon Jan 12 20:05:56 CET 2026
+Remaining tasks: 23
+Next task: Phase 37: Add shadcn Tabs and Collapsible components
+Attempt 1...
