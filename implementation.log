@@ -149,3 +149,21 @@ Time: Mon Jan 12 19:33:47 CET 2026
 Remaining tasks: 48
 Next task: Phase 12: Create FileUpload component (static)
 Attempt 1...
+Phase 12 complete.
+
+Created FileUpload component with:
+- shadcn Card with dashed border
+- Upload icon (lucide-react)
+- Centered layout
+- File type indicator (.csv)
+- Hover states
+- Integrated into home page
+
+Component is static (no functionality yet). Next phase will add drag-and-drop.
+Commit created: 3c1aaaa feat: Add FileUpload component UI
+
+=== Attempting task 11 of 59 ===
+Time: Mon Jan 12 19:34:44 CET 2026
+Remaining tasks: 47
+Next task: Phase 13: Add drag-and-drop functionality
+Attempt 1...
