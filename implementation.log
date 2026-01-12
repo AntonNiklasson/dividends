@@ -285,3 +285,23 @@ Time: Mon Jan 12 19:43:35 CET 2026
 Remaining tasks: 40
 Next task: Phase 20: Add parse validation
 Attempt 1...
+## ✓ Phase 20 Complete
+
+**Implemented:**
+- Required column validation (Kortnamn, Volym)
+- Early return if columns missing
+- Validation for empty data
+- Structured error messages
+
+**Changes:**
+- src/lib/parseCsv.ts:35-53 - Column header validation
+- src/lib/parseCsv.ts:111-114 - Empty data validation
+
+**Commit:** b285065
+Commit created: b285065 feat: Add CSV parse validation
+
+=== Attempting task 19 of 59 ===
+Time: Mon Jan 12 19:44:37 CET 2026
+Remaining tasks: 39
+Next task: Phase 21: Write parseCsv unit tests
+Attempt 1...
