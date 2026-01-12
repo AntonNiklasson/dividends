@@ -541,7 +541,7 @@ Use this checklist to track completion:
 ### CSV Parsing (17–21)
 
 - [x] Phase 17: Create TypeScript types
-- [ ] Phase 18: Implement parseCsv function
+- [x] Phase 18: Implement parseCsv function
 - [ ] Phase 19: Map Avanza columns to portfolio data
 - [ ] Phase 20: Add parse validation
 - [ ] Phase 21: Write parseCsv unit tests

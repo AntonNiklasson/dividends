@@ -221,3 +221,30 @@ Time: Mon Jan 12 19:40:34 CET 2026
 Remaining tasks: 43
 Next task: Phase 17: Create TypeScript types
 Attempt 1...
+Perfect! I've successfully completed Phase 17: Create TypeScript types.
+
+## Summary
+
+**Completed:** Phase 17 - TypeScript types defined
+
+**What was done:**
+- Created `src/lib/types.ts` with all necessary interfaces:
+  - `AvanzaRow` - Avanza CSV structure
+  - `PortfolioStock` - Parsed stock data
+  - `ParsedPortfolio` - Parse result with errors
+  - `DividendPayment` & `DividendScheduleEntry` - Dividend data structures
+  - `StockWithDividends` - Stock with fetched dividend info
+  - `ProjectedPayment`, `MonthProjection`, `YearProjection` - Projection structures
+  - `ProjectionResponse` - 3-year projection
+  - `AnalyzeResponse` - API response shape
+- Updated implementation plan (Phase 17 marked complete)
+- Committed changes
+
+**Next task:** Phase 18 - Implement parseCsv function
+Commit created: 22ebca0 feat: Define TypeScript types for portfolio data
+
+=== Attempting task 16 of 59 ===
+Time: Mon Jan 12 19:41:14 CET 2026
+Remaining tasks: 42
+Next task: Phase 18: Implement parseCsv function
+Attempt 1...
