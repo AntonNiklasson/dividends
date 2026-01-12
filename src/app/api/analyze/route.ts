@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseCsv } from '@/lib/parseCsv';
+import { fetchBatchDividends } from '@/lib/fetchDividends';
 import type { AnalyzeResponse } from '@/lib/types';
 
 /**
@@ -83,24 +84,34 @@ export async function POST(request: NextRequest) {
       return createErrorResponse(parsedPortfolio.errors.join('; '), 400);
     }
 
-    // Return parsed portfolio (projection will be added in later phases)
+    // Fetch dividend data for all stocks
+    let dividendData;
+    try {
+      dividendData = await fetchBatchDividends(parsedPortfolio.stocks);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch dividend data';
+      return createErrorResponse(message, 500);
+    }
+
+    // Combine parsing errors with dividend fetching errors
+    const allErrors = [
+      ...parsedPortfolio.errors.map((error) => ({
+        ticker: 'UNKNOWN',
+        error,
+      })),
+      ...dividendData.errors,
+    ];
+
+    // Return portfolio with dividend data (projection will be added in Phase 36)
     return NextResponse.json(
       {
         success: true,
         portfolio: {
-          stocks: parsedPortfolio.stocks.map((stock) => ({
-            ticker: stock.ticker,
-            name: stock.name,
-            initialShares: stock.shares,
-            currency: stock.currency,
-            currentPrice: 0, // Will be fetched in Phase 26
-            dividendSchedule: [], // Will be fetched in Phase 25
-            hasDividends: true, // Will be determined in Phase 27
-          })),
-          errors: parsedPortfolio.errors.map((error) => ({
-            ticker: 'UNKNOWN',
-            error,
-          })),
+          stocks: dividendData.successfulStocks,
+          errors: allErrors,
         },
       } as AnalyzeResponse,
       { status: 200 }

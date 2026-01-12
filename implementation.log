@@ -491,3 +491,34 @@ Time: Mon Jan 12 19:55:45 CET 2026
 Remaining tasks: 32
 Next task: Phase 28: Write fetchDividends unit tests
 Attempt 1...
+Perfect! **Phase 28 complete**. 
+
+## Summary
+
+Successfully implemented comprehensive unit tests for `fetchDividends` functions:
+
+**Test Coverage (16 tests):**
+- ✅ Successful dividend & price fetching
+- ✅ Stocks with no dividends  
+- ✅ Ticker not found errors
+- ✅ Network/API errors
+- ✅ Price fetching failures (non-fatal)
+- ✅ Batch processing with partial failures
+- ✅ Parallel ticker fetching
+- ✅ Dividend schedule conversion
+
+**Key Features:**
+- Mocked `yahoo-finance2` using Vitest
+- Proper TypeScript types (no `any`)
+- Tests verify error handling, edge cases, and data transformation
+- All tests pass ✓
+- ESLint passes ✓
+
+**Next task:** Phase 29 - Integrate dividend fetching into API route
+Commit created: 82b1fea test: Add unit tests for fetchDividends
+
+=== Attempting task 27 of 59 ===
+Time: Mon Jan 12 19:58:36 CET 2026
+Remaining tasks: 31
+Next task: Phase 29: Integrate dividend fetching into API
+Attempt 1...
