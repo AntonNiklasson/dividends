@@ -359,3 +359,34 @@ Time: Mon Jan 12 19:48:04 CET 2026
 Remaining tasks: 37
 Next task: Phase 23: Integrate CSV parsing into API
 Attempt 1...
+Perfect! Phase 23 is complete. The CSV parsing has been successfully integrated into the API route:
+
+## Summary
+
+**Phase 23: Integrate CSV parsing into API** ✅
+
+Implemented:
+- Read uploaded file content as text
+- Parse CSV using `parseCsv` function  
+- Return parsed portfolio with stocks on success
+- Return error response (400) if parsing fails
+- Map `PortfolioStock` to `StockWithDividends` structure with placeholder values
+- Include any parsing errors in response
+- Proper TypeScript typing with `AnalyzeResponse`
+
+The API route now:
+1. Receives CSV file via multipart form data
+2. Parses it using the Avanza format parser
+3. Returns structured portfolio data or errors
+4. Ready for dividend data fetching (next phases)
+
+Tests pass ✓  
+Linting passes ✓  
+Committed with proper message ✓
+Commit created: 4e9871c feat: Integrate CSV parsing into analyze API route
+
+=== Attempting task 22 of 59 ===
+Time: Mon Jan 12 19:49:14 CET 2026
+Remaining tasks: 36
+Next task: Phase 24: Add API error handling
+Attempt 1...
