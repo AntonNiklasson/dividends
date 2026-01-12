@@ -32,14 +32,14 @@ for i in $(seq 1 $MAX_TASKS); do
   echo "Next task: $NEXT_TASK" | tee -a "$LOG_FILE"
 
   # Run Claude with /implement
-  # --yes auto-accepts prompts, --dangerously-skip-permissions skips permission checks
+  # --dangerously-skip-permissions skips permission checks
   RETRY=0
   SUCCESS=false
 
   while [ $RETRY -lt $RETRY_LIMIT ] && [ "$SUCCESS" = false ]; do
     echo "Attempt $((RETRY + 1))..." | tee -a "$LOG_FILE"
 
-    if claude --yes --dangerously-skip-permissions -p "/implement" 2>&1 | tee -a "$LOG_FILE"; then
+    if claude --dangerously-skip-permissions -p "/implement" 2>&1 | tee -a "$LOG_FILE"; then
       # Check if a commit was made in the last 5 minutes
       if git log -1 --since="5 minutes ago" --oneline 2>/dev/null | grep -q .; then
         LAST_COMMIT=$(git log -1 --oneline)
