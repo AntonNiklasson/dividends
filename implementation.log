@@ -824,3 +824,30 @@ Time: Mon Jan 12 20:16:23 CET 2026
 Remaining tasks: 14
 Next task: Phase 46: Display year totals
 Attempt 1...
+Perfect! **Phase 46: Display year totals** has been completed successfully.
+
+## Summary
+
+✅ **Implemented:** Year totals displayed at top of each year tab
+
+**What was added:**
+- Year total section showing aggregated dividend amounts by currency
+- Formatted using Swedish locale (`sv-SE`) for proper currency display
+- Clean, prominent display with large bold text (2xl font)
+- Supports multiple currencies, displayed as flex wrap for responsive layout
+- Placed above monthly breakdown for easy visibility
+
+**Technical details:**
+- Added section in `src/app/results/page.tsx:54-71`
+- Uses `yearData.yearTotal` from projection data
+- Intl.NumberFormat for currency formatting
+- Styled with muted background and border for visual distinction
+
+**Next task:** Phase 47 - Connect upload to API (first task in Integration & Navigation section)
+Commit created: f600975 feat: Add year total display
+
+=== Attempting task 43 of 59 ===
+Time: Mon Jan 12 20:17:34 CET 2026
+Remaining tasks: 13
+Next task: Phase 47: Connect upload to API
+Attempt 1...
