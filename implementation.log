@@ -704,3 +704,21 @@ Time: Mon Jan 12 20:09:05 CET 2026
 Remaining tasks: 20
 Next task: Phase 40: Create YearTabs component
 Attempt 1...
+## Task Complete
+
+**Phase 40: Create YearTabs component** ✓
+
+Created `YearTabs.tsx` component that:
+- Uses shadcn Tabs for year selection (2026/2027/2028)
+- Accepts render prop pattern for flexible content
+- Manages tab state via Radix UI's built-in state
+- Passes all linting/formatting checks
+
+Committed with message: `feat: Create YearTabs component with shadcn Tabs`
+Commit created: 1cdac1d feat: Create YearTabs component with shadcn Tabs
+
+=== Attempting task 37 of 59 ===
+Time: Mon Jan 12 20:10:19 CET 2026
+Remaining tasks: 19
+Next task: Phase 41: Create MonthCard component (static)
+Attempt 1...
