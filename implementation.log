@@ -589,3 +589,31 @@ Time: Mon Jan 12 20:01:43 CET 2026
 Remaining tasks: 27
 Next task: Phase 33: Implement DRIP calculation
 Attempt 1...
+Perfect! Phase 33 is now complete. Here's what I implemented:
+
+## Phase 33: Implement DRIP calculation ✅
+
+**Changes made:**
+
+1. **Share tracking across years** - Added `shareTracker` Map to track share counts as they grow through reinvestment
+2. **Chronological processing** - Created `DividendEvent` structure and sorted all dividend events by date (month, then day) to process them in the correct order
+3. **DRIP calculation** - After each dividend payment:
+   - Calculate dividend amount using current share count
+   - Divide dividend by current stock price to get new shares
+   - Update share tracker with increased share count
+4. **Compounding effect** - Share tracker persists across years (2026→2027→2028), creating true compounding
+
+**Key implementation details:**
+- Uses `currentShares` from tracker instead of `initialShares`
+- Sorts events to ensure proper chronological reinvestment
+- DRIP formula: `newShares = dividendAmount / currentPrice`
+- Share count grows throughout projection period
+
+All linting and formatting checks passed. Committed with message: "feat: Implement DRIP reinvestment calculation"
+Commit created: 283b814 feat: Implement DRIP reinvestment calculation
+
+=== Attempting task 31 of 59 ===
+Time: Mon Jan 12 20:03:02 CET 2026
+Remaining tasks: 26
+Next task: Phase 34: Aggregate by month
+Attempt 1...
