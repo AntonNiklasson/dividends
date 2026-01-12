@@ -758,3 +758,26 @@ Time: Mon Jan 12 20:12:09 CET 2026
 Remaining tasks: 17
 Next task: Phase 43: Add expand/collapse to MonthCard
 Attempt 1...
+Perfect! **Phase 43 complete.**
+
+## Summary
+
+Successfully implemented expand/collapse functionality for MonthCard:
+
+- ✅ Added Collapsible component from shadcn/ui
+- ✅ Integrated StockPaymentRow to display payment details
+- ✅ Added ChevronUp/ChevronDown icons for visual feedback
+- ✅ Updated MonthCard props to accept `payments: ProjectedPayment[]`
+- ✅ Shows expand/collapse trigger only when payments exist
+- ✅ Passed linting and formatting checks
+- ✅ Committed with descriptive message
+- ✅ Marked Phase 43 complete in implementation plan
+
+The MonthCard component now displays a collapsible section showing individual stock payments with ticker, date, shares, and amount when expanded.
+Commit created: c3c85a4 feat: Add expand/collapse to MonthCard with shadcn Collapsible
+
+=== Attempting task 40 of 59 ===
+Time: Mon Jan 12 20:13:19 CET 2026
+Remaining tasks: 16
+Next task: Phase 44: Wire up results page with real data
+Attempt 1...

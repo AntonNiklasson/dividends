@@ -1,4 +1,23 @@
+'use client';
+
+import { useAtom } from 'jotai';
+import { portfolioAtom } from '@/store/portfolioAtom';
+import YearTabs from '@/components/YearTabs';
+import MonthCard from '@/components/MonthCard';
+
 export default function ResultsPage() {
+  const [portfolioData] = useAtom(portfolioAtom);
+
+  if (!portfolioData?.success || !portfolioData.projection) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <p className="text-muted-foreground">No projection data available</p>
+      </div>
+    );
+  }
+
+  const { projection } = portfolioData;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
@@ -9,7 +28,28 @@ export default function ResultsPage() {
       </header>
 
       <main>
-        <p className="text-muted-foreground">Results will be displayed here</p>
+        <YearTabs>
+          {(year) => {
+            const yearData = projection[year];
+
+            if (!yearData) {
+              return <p className="text-muted-foreground">No data for {year}</p>;
+            }
+
+            return (
+              <div className="space-y-4 mt-6">
+                {yearData.months.map((monthData) => (
+                  <MonthCard
+                    key={monthData.month}
+                    month={monthData.month}
+                    total={monthData.total}
+                    payments={monthData.payments}
+                  />
+                ))}
+              </div>
+            );
+          }}
+        </YearTabs>
       </main>
     </div>
   );
