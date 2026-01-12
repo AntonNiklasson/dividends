@@ -532,7 +532,7 @@ Use this checklist to track completion:
 ### File Upload UI (11–16)
 
 - [x] Phase 11: Create app layout
-- [ ] Phase 12: Create FileUpload component (static)
+- [x] Phase 12: Create FileUpload component (static)
 - [ ] Phase 13: Add drag-and-drop functionality
 - [ ] Phase 14: Add click-to-browse functionality
 - [ ] Phase 15: Add upload state management

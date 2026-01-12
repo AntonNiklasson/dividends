@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/card';
+import FileUpload from '@/components/FileUpload';
 
 export default function Home() {
   return (
@@ -14,10 +15,7 @@ export default function Home() {
               for the next 3 years
             </p>
           </div>
-          {/* File upload component will go here */}
-          <div className="flex min-h-48 items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50">
-            <p className="text-muted-foreground">File upload component</p>
-          </div>
+          <FileUpload />
         </div>
       </Card>
     </div>
