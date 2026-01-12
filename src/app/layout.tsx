@@ -29,17 +29,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="min-h-screen bg-background">
-          <header className="border-b border-border">
-            <div className="container mx-auto px-4 py-4 sm:py-6">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+          <header className="border-b shadow-sm">
+            <div className="container mx-auto px-4 py-6">
+              <h1 className="text-2xl font-bold">
                 Dividend Portfolio Projector
               </h1>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Project your dividend income with DRIP reinvestment
               </p>
             </div>
           </header>
-          <main className="container mx-auto px-0 sm:px-4 py-4 sm:py-8">
+          <main className="container mx-auto px-0 sm:px-4 py-8">
             {children}
           </main>
         </div>

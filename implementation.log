@@ -996,3 +996,35 @@ Time: Mon Jan 12 20:27:38 CET 2026
 Remaining tasks: 6
 Next task: Phase 54: Responsive styling pass
 Attempt 1...
+**Phase 54 complete!** 
+
+Applied responsive styling across all pages and components:
+
+**Upload page:**
+- Responsive padding (p-4 sm:p-6 md:p-8)
+- Font sizes scale from mobile to desktop
+- Better spacing on small screens
+
+**Results page:**
+- Header stacks on mobile (flex-col → flex-row)
+- "Upload New File" button full-width on mobile
+- Year totals and month cards adapt to screen size
+
+**Components:**
+- FileUpload: Smaller icons/text on mobile, responsive padding
+- MonthCard: Hide "Expand/Collapse" text on mobile (show icon only)
+- StockPaymentRow: Stacks vertically on mobile instead of overflowing
+- ErrorBanner: Smaller text, break long words
+
+**Layout:**
+- Header responsive padding and font sizes
+- Main container removes padding on mobile, adds back on sm breakpoint
+
+All changes passed lint, format, and build checks.
+Commit created: 8d0bc81 feat: Add responsive styling pass
+
+=== Attempting task 51 of 59 ===
+Time: Mon Jan 12 20:30:50 CET 2026
+Remaining tasks: 5
+Next task: Phase 55: Final styling polish
+Attempt 1...

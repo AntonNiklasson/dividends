@@ -143,14 +143,12 @@ export default function FileUpload() {
       case 'uploading':
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center w-full">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-blue-100">
-              <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 animate-spin" />
+            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-primary/10">
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
             <div className="space-y-2 w-full">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                Processing...
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-500">
+              <h3 className="text-lg font-semibold">Processing...</h3>
+              <p className="text-sm text-muted-foreground">
                 Analyzing your portfolio file
               </p>
               <div className="w-full pt-2">
@@ -163,14 +161,12 @@ export default function FileUpload() {
       case 'success':
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-green-100">
-              <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
+            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-green-100">
+              <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                Upload Successful
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-500 break-all px-2">
+              <h3 className="text-lg font-semibold">Upload Successful</h3>
+              <p className="text-sm text-muted-foreground break-all px-2">
                 {uploadStatus.file?.name}
               </p>
             </div>
@@ -193,6 +189,7 @@ export default function FileUpload() {
               onClick={() =>
                 setUploadStatus({ state: 'idle', file: null, error: null })
               }
+              className="hover:bg-accent transition-colors"
             >
               Try Again
             </Button>
@@ -203,22 +200,20 @@ export default function FileUpload() {
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <div
-              className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-colors ${
-                isDragging ? 'bg-blue-100' : 'bg-gray-100'
+              className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                isDragging ? 'bg-primary/10' : 'bg-muted'
               }`}
             >
               <Upload
-                className={`w-6 h-6 sm:w-8 sm:h-8 transition-colors ${
-                  isDragging ? 'text-blue-500' : 'text-gray-500'
+                className={`w-8 h-8 transition-colors ${
+                  isDragging ? 'text-primary' : 'text-muted-foreground'
                 }`}
               />
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                Upload Portfolio CSV
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-500 px-2">
+              <h3 className="text-lg font-semibold">Upload Portfolio CSV</h3>
+              <p className="text-sm text-muted-foreground px-2">
                 Drag and drop your Avanza export file here, or click to browse
               </p>
             </div>
@@ -226,13 +221,15 @@ export default function FileUpload() {
             <Button
               variant="outline"
               type="button"
-              className="text-xs sm:text-sm"
+              className="hover:bg-accent transition-colors"
             >
               Browse Files
             </Button>
 
-            <div className="text-xs text-gray-400">
-              Accepted format: <span className="font-mono">.csv</span>
+            <div className="text-xs text-muted-foreground">
+              Accepted format:{' '}
+              <span className="font-mono font-medium">.csv</span> · Max size:
+              5MB
             </div>
           </div>
         );
@@ -253,16 +250,16 @@ export default function FileUpload() {
         disabled={!isInteractive}
       />
       <Card
-        className={`w-full max-w-xl p-4 sm:p-6 md:p-8 border-2 border-dashed transition-colors ${
+        className={`w-full max-w-xl p-8 border-2 border-dashed transition-all duration-200 ${
           isInteractive ? 'cursor-pointer' : 'cursor-default'
         } ${
           isDragging && isInteractive
-            ? 'border-blue-500 bg-blue-50'
+            ? 'border-primary bg-primary/5 shadow-md'
             : uploadStatus.state === 'error'
-              ? 'border-red-300'
+              ? 'border-destructive/50 bg-destructive/5'
               : uploadStatus.state === 'success'
-                ? 'border-green-300 bg-green-50'
-                : 'border-gray-300 hover:border-gray-400'
+                ? 'border-green-500/50 bg-green-50'
+                : 'border-muted-foreground/30 hover:border-muted-foreground/50 hover:bg-muted/30'
         }`}
         onDragOver={isInteractive ? handleDragOver : undefined}
         onDragLeave={isInteractive ? handleDragLeave : undefined}
