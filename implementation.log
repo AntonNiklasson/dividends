@@ -562,3 +562,30 @@ Time: Mon Jan 12 20:00:41 CET 2026
 Remaining tasks: 28
 Next task: Phase 32: Extend projection to 3 years
 Attempt 1...
+Perfect! Phase 32 completed successfully.
+
+## Summary
+
+**Phase 32: Extend projection to 3 years** ✅
+
+Modified `src/lib/calculateProjection.ts`:
+- Extended `calculateProjection()` to generate projections for 2026, 2027, and 2028
+- Called `projectYear()` three times (once per year) instead of just once
+- Replaced placeholders for 2027 and 2028 with actual projections
+- Since DRIP is not yet implemented, each year produces identical dividend amounts
+
+Changes:
+- Updated function comment to reflect 3-year projection
+- Generated `year2027` and `year2028` using the existing `projectYear()` helper
+- Tests pass, linting clean, formatting verified
+
+Committed with message: "feat: Extend projection to 3 years"
+
+Next unchecked task: **Phase 33: Implement DRIP calculation**
+Commit created: a5b9794 feat: Extend projection to 3 years
+
+=== Attempting task 30 of 59 ===
+Time: Mon Jan 12 20:01:43 CET 2026
+Remaining tasks: 27
+Next task: Phase 33: Implement DRIP calculation
+Attempt 1...
