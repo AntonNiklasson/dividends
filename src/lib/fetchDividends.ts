@@ -2,12 +2,14 @@ import yahooFinance from 'yahoo-finance2';
 import type { DividendPayment } from './types';
 
 /**
- * Fetches dividend history for a single ticker from Yahoo Finance
- * Returns dividends from the last 12 months
+ * Fetches dividend history and current stock price for a single ticker from Yahoo Finance
+ * Returns dividends from the last 12 months and the current price
  */
-export async function fetchDividends(
-  ticker: string
-): Promise<{ dividends: DividendPayment[]; error?: string }> {
+export async function fetchDividends(ticker: string): Promise<{
+  dividends: DividendPayment[];
+  currentPrice?: number;
+  error?: string;
+}> {
   try {
     // Calculate date range (last 12 months)
     const endDate = new Date();
@@ -31,15 +33,27 @@ export async function fetchDividends(
         amount: item.dividends!,
       }));
 
+    // Fetch current stock price using quote endpoint
+    let currentPrice: number | undefined;
+    try {
+      const quote = await yahooFinance.quote(ticker);
+      currentPrice = quote.regularMarketPrice;
+    } catch (priceError) {
+      // If we can't get the price, we'll return undefined
+      // This is a non-fatal error - we can still return dividend data
+      console.warn(`Failed to fetch current price for ${ticker}:`, priceError);
+    }
+
     // If no dividends found in the last 12 months, return empty array
     if (dividends.length === 0) {
       return {
         dividends: [],
+        currentPrice,
         error: 'No dividend history found in the last 12 months',
       };
     }
 
-    return { dividends };
+    return { dividends, currentPrice };
   } catch (error) {
     // Handle various error types
     if (error instanceof Error) {
