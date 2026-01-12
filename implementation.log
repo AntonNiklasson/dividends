@@ -425,3 +425,22 @@ Time: Mon Jan 12 19:50:32 CET 2026
 Remaining tasks: 35
 Next task: Phase 25: Create fetchDividends function
 Attempt 1...
+**Phase 25 complete**
+
+Implemented:
+- Installed yahoo-finance2 package
+- Created lib/fetchDividends.ts with single-ticker dividend fetching
+- Function fetches last 12 months of dividend history
+- Returns structured dividend data (date, amount per share)
+- Handles errors: ticker not found, no dividends, network failures
+- Linting passes
+- Changes committed
+
+The function is ready for Phase 26 (stock price fetching) and Phase 27 (batch fetching).
+Commit created: 5611a5f feat: Implement single-ticker dividend fetching with yahoo-finance2
+
+=== Attempting task 24 of 59 ===
+Time: Mon Jan 12 19:51:48 CET 2026
+Remaining tasks: 34
+Next task: Phase 26: Add stock price fetching
+Attempt 1...
