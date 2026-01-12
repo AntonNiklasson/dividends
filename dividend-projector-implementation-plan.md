@@ -565,7 +565,7 @@ Use this checklist to track completion:
 - [x] Phase 30: Define projection types
 - [x] Phase 31: Implement basic projection (no DRIP)
 - [x] Phase 32: Extend projection to 3 years
-- [ ] Phase 33: Implement DRIP calculation
+- [x] Phase 33: Implement DRIP calculation
 - [ ] Phase 34: Aggregate by month
 - [ ] Phase 35: Write projection unit tests
 - [ ] Phase 36: Integrate projection into API
