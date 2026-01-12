@@ -1,15 +1,18 @@
 'use client';
 
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
-import { portfolioAtom } from '@/store/portfolioAtom';
+import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
 import YearTabs from '@/components/YearTabs';
 import MonthCard from '@/components/MonthCard';
 import ErrorBanner from '@/components/ErrorBanner';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card } from '@/components/ui/card';
 
 export default function ResultsPage() {
   const [portfolioData, setPortfolioData] = useAtom(portfolioAtom);
+  const isLoading = useAtomValue(portfolioLoadingAtom);
   const router = useRouter();
 
   const handleUploadNew = () => {
@@ -18,6 +21,54 @@ export default function ResultsPage() {
     // Navigate back to home
     router.push('/');
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <Skeleton className="h-9 w-64 mb-2" />
+              <Skeleton className="h-5 w-96" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </header>
+
+        <main>
+          {/* Skeleton for tabs */}
+          <div className="mb-6">
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-20" />
+              <Skeleton className="h-10 w-20" />
+              <Skeleton className="h-10 w-20" />
+            </div>
+          </div>
+
+          {/* Skeleton for year total */}
+          <Card className="p-6 mb-8">
+            <Skeleton className="h-6 w-32 mb-3" />
+            <Skeleton className="h-8 w-40" />
+          </Card>
+
+          {/* Skeleton for month cards */}
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <Skeleton className="h-6 w-24 mb-2" />
+                    <Skeleton className="h-5 w-32" />
+                  </div>
+                  <Skeleton className="h-5 w-5" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (!portfolioData?.success || !portfolioData.projection) {
     return (

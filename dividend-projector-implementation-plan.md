@@ -592,7 +592,7 @@ Use this checklist to track completion:
 
 ### Polish (51–55)
 
-- [ ] Phase 51: Add loading states
+- [x] Phase 51: Add loading states
 - [ ] Phase 52: Add empty state for months
 - [ ] Phase 53: Create sample CSV file
 - [ ] Phase 54: Responsive styling pass
