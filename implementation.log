@@ -781,3 +781,20 @@ Time: Mon Jan 12 20:13:19 CET 2026
 Remaining tasks: 16
 Next task: Phase 44: Wire up results page with real data
 Attempt 1...
+**Phase 44 complete**. 
+
+Results page now wired to real projection data:
+- Reads from `portfolioAtom` (/Users/anton.niklasson/code/dividends/src/app/results/page.tsx:9)
+- YearTabs iterate through 2026/2027/2028 from projection data
+- MonthCards display actual monthly totals & payments per year
+- StockPaymentRows render via MonthCard automatically
+- Handles missing data gracefully
+
+Build & lint pass. Committed.
+Commit created: 4416423 feat: Connect results page to projection data
+
+=== Attempting task 41 of 59 ===
+Time: Mon Jan 12 20:14:50 CET 2026
+Remaining tasks: 15
+Next task: Phase 45: Create ErrorBanner component
+Attempt 1...

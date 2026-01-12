@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import { portfolioAtom } from '@/store/portfolioAtom';
 import YearTabs from '@/components/YearTabs';
 import MonthCard from '@/components/MonthCard';
+import ErrorBanner from '@/components/ErrorBanner';
 
 export default function ResultsPage() {
   const [portfolioData] = useAtom(portfolioAtom);
@@ -16,7 +17,12 @@ export default function ResultsPage() {
     );
   }
 
-  const { projection } = portfolioData;
+  const { projection, portfolio } = portfolioData;
+
+  // Extract ticker errors and non-dividend stocks
+  const tickerErrors = portfolio?.errors || [];
+  const noDividendStocks =
+    portfolio?.stocks.filter((stock) => !stock.hasDividends) || [];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -28,12 +34,18 @@ export default function ResultsPage() {
       </header>
 
       <main>
+        <ErrorBanner
+          tickerErrors={tickerErrors}
+          noDividendStocks={noDividendStocks}
+        />
         <YearTabs>
           {(year) => {
             const yearData = projection[year];
 
             if (!yearData) {
-              return <p className="text-muted-foreground">No data for {year}</p>;
+              return (
+                <p className="text-muted-foreground">No data for {year}</p>
+              );
             }
 
             return (
