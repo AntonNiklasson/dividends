@@ -305,3 +305,33 @@ Time: Mon Jan 12 19:44:37 CET 2026
 Remaining tasks: 39
 Next task: Phase 21: Write parseCsv unit tests
 Attempt 1...
+Perfect! All 26 unit tests pass. Phase 21 is complete.
+
+## Summary
+
+**Phase 21 Complete: Write parseCsv unit tests**
+
+Created comprehensive unit tests in `tests/unit/parseCsv.test.ts` with 24 test cases covering:
+
+- Valid Avanza CSV parsing (STOCK, EXCHANGE_TRADED_FUND, ETF types)
+- Swedish decimal format conversion (12,5 → 12.5)
+- Type filtering (excluding FUND, BOND, etc.)
+- Missing column validation
+- Invalid data handling (missing ticker/shares, invalid numbers, negatives, zero)
+- Empty file handling
+- Field defaults (currency → SEK, ISIN → "", name → ticker)
+- Whitespace trimming
+
+All tests pass ✓ (26/26)
+Lint and format checks pass ✓
+
+**Commit:** 75b6e0c test: Add unit tests for parseCsv
+
+**Next task:** Phase 22 - Create analyze API route
+Commit created: 75b6e0c test: Add unit tests for parseCsv
+
+=== Attempting task 20 of 59 ===
+Time: Mon Jan 12 19:47:04 CET 2026
+Remaining tasks: 38
+Next task: Phase 22: Create analyze API route
+Attempt 1...
