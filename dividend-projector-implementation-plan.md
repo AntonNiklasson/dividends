@@ -574,7 +574,7 @@ Use this checklist to track completion:
 
 - [x] Phase 37: Add shadcn Tabs and Collapsible components
 - [x] Phase 38: Create results page
-- [ ] Phase 39: Create portfolio Jotai atom
+- [x] Phase 39: Create portfolio Jotai atom
 - [ ] Phase 40: Create YearTabs component
 - [ ] Phase 41: Create MonthCard component (static)
 - [ ] Phase 42: Create StockPaymentRow component
