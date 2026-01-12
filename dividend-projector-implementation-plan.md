@@ -600,7 +600,7 @@ Use this checklist to track completion:
 
 ### Testing (56–59)
 
-- [ ] Phase 56: Write API route integration test
+- [x] Phase 56: Write API route integration test
 - [ ] Phase 57: Write E2E test: successful upload flow
 - [ ] Phase 58: Write E2E test: error handling
 - [ ] Phase 59: Write E2E test: results interaction
