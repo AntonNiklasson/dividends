@@ -143,14 +143,14 @@ export default function FileUpload() {
       case 'uploading':
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center w-full">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-blue-100">
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-blue-100">
+              <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 animate-spin" />
             </div>
             <div className="space-y-2 w-full">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                 Processing...
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 Analyzing your portfolio file
               </p>
               <div className="w-full pt-2">
@@ -163,14 +163,16 @@ export default function FileUpload() {
       case 'success':
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-green-100">
-              <CheckCircle className="w-8 h-8 text-green-500" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-green-100">
+              <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                 Upload Successful
               </h3>
-              <p className="text-sm text-gray-500">{uploadStatus.file?.name}</p>
+              <p className="text-xs sm:text-sm text-gray-500 break-all px-2">
+                {uploadStatus.file?.name}
+              </p>
             </div>
           </div>
         );
@@ -201,27 +203,31 @@ export default function FileUpload() {
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <div
-              className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+              className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-colors ${
                 isDragging ? 'bg-blue-100' : 'bg-gray-100'
               }`}
             >
               <Upload
-                className={`w-8 h-8 transition-colors ${
+                className={`w-6 h-6 sm:w-8 sm:h-8 transition-colors ${
                   isDragging ? 'text-blue-500' : 'text-gray-500'
                 }`}
               />
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                 Upload Portfolio CSV
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500 px-2">
                 Drag and drop your Avanza export file here, or click to browse
               </p>
             </div>
 
-            <Button variant="outline" type="button">
+            <Button
+              variant="outline"
+              type="button"
+              className="text-xs sm:text-sm"
+            >
               Browse Files
             </Button>
 
@@ -247,7 +253,7 @@ export default function FileUpload() {
         disabled={!isInteractive}
       />
       <Card
-        className={`w-full max-w-xl p-8 border-2 border-dashed transition-colors ${
+        className={`w-full max-w-xl p-4 sm:p-6 md:p-8 border-2 border-dashed transition-colors ${
           isInteractive ? 'cursor-pointer' : 'cursor-default'
         } ${
           isDragging && isInteractive
