@@ -549,7 +549,7 @@ Use this checklist to track completion:
 ### API Route Foundation (22–24)
 
 - [x] Phase 22: Create analyze API route
-- [ ] Phase 23: Integrate CSV parsing into API
+- [x] Phase 23: Integrate CSV parsing into API
 - [ ] Phase 24: Add API error handling
 
 ### Dividend Data Fetching (25–29)
