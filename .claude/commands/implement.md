@@ -62,11 +62,22 @@ All code must pass linting and formatting checks. Fix issues before proceeding.
 
 ## Step 7: Commit
 
-Stage all changes and commit with the suggested message from the phase, or a similar descriptive message.
+**CRITICAL: Stage ALL files** including newly created ones:
+```bash
+git add -A
+```
 
-Format: The phase usually suggests something like `Commit: "Initialize Next.js project with TypeScript"`
+Then verify the staged changes actually include your implementation work:
+```bash
+git status
+```
 
-Use that as your commit message, prefixed appropriately:
+**Before committing, check that:**
+- The staged files include the actual implementation (source files, config files, etc.)
+- It's NOT just the implementation plan update
+- If only `dividend-projector-implementation-plan.md` is staged, STOP - your implementation files were not added
+
+Now commit with the suggested message from the phase, prefixed appropriately:
 - `feat:` for new features
 - `chore:` for setup/config
 - `test:` for tests
