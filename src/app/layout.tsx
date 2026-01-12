@@ -30,16 +30,18 @@ export default function RootLayout({
       >
         <div className="min-h-screen bg-background">
           <header className="border-b border-border">
-            <div className="container mx-auto px-4 py-6">
-              <h1 className="text-2xl font-bold text-foreground">
+            <div className="container mx-auto px-4 py-4 sm:py-6">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                 Dividend Portfolio Projector
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 Project your dividend income with DRIP reinvestment
               </p>
             </div>
           </header>
-          <main className="container mx-auto px-4 py-8">{children}</main>
+          <main className="container mx-auto px-0 sm:px-4 py-4 sm:py-8">
+            {children}
+          </main>
         </div>
       </body>
     </html>

@@ -24,12 +24,12 @@ export default function ResultsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8">
-          <div className="flex items-center justify-between">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        <header className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex-1">
-              <Skeleton className="h-9 w-64 mb-2" />
-              <Skeleton className="h-5 w-96" />
+              <Skeleton className="h-8 sm:h-9 w-48 sm:w-64 mb-2" />
+              <Skeleton className="h-4 sm:h-5 w-64 sm:w-96" />
             </div>
             <Skeleton className="h-10 w-32" />
           </div>
@@ -46,19 +46,19 @@ export default function ResultsPage() {
           </div>
 
           {/* Skeleton for year total */}
-          <Card className="p-6 mb-8">
-            <Skeleton className="h-6 w-32 mb-3" />
-            <Skeleton className="h-8 w-40" />
+          <Card className="p-4 sm:p-6 mb-6 sm:mb-8">
+            <Skeleton className="h-5 sm:h-6 w-28 sm:w-32 mb-3" />
+            <Skeleton className="h-7 sm:h-8 w-32 sm:w-40" />
           </Card>
 
           {/* Skeleton for month cards */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="p-6">
+              <Card key={i} className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <Skeleton className="h-6 w-24 mb-2" />
-                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-5 sm:h-6 w-20 sm:w-24 mb-2" />
+                    <Skeleton className="h-4 sm:h-5 w-24 sm:w-32" />
                   </div>
                   <Skeleton className="h-5 w-5" />
                 </div>
@@ -86,16 +86,22 @@ export default function ResultsPage() {
     portfolio?.stocks.filter((stock) => !stock.hasDividends) || [];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8">
-        <div className="flex items-center justify-between">
+    <div className="container mx-auto px-4 py-4 sm:py-8">
+      <header className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Dividend Projection</h1>
-            <p className="mt-2 text-muted-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold">
+              Dividend Projection
+            </h1>
+            <p className="mt-1 sm:mt-2 text-sm sm:text-base text-muted-foreground">
               Your 3-year dividend income projection with DRIP reinvestment
             </p>
           </div>
-          <Button onClick={handleUploadNew} variant="outline">
+          <Button
+            onClick={handleUploadNew}
+            variant="outline"
+            className="text-xs sm:text-sm w-full sm:w-auto"
+          >
             Upload New File
           </Button>
         </div>
@@ -117,16 +123,19 @@ export default function ResultsPage() {
             }
 
             return (
-              <div className="space-y-4 mt-6">
+              <div className="space-y-3 sm:space-y-4 mt-4 sm:mt-6">
                 {/* Year Total Display */}
-                <div className="mb-8 p-6 bg-muted/50 rounded-lg border">
-                  <h2 className="text-lg font-semibold mb-3">
+                <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-muted/50 rounded-lg border">
+                  <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">
                     Total for {year}
                   </h2>
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex flex-wrap gap-3 sm:gap-4">
                     {Object.entries(yearData.yearTotal).map(
                       ([currency, amount]) => (
-                        <div key={currency} className="text-2xl font-bold">
+                        <div
+                          key={currency}
+                          className="text-xl sm:text-2xl font-bold"
+                        >
                           {new Intl.NumberFormat('sv-SE', {
                             style: 'currency',
                             currency: currency,

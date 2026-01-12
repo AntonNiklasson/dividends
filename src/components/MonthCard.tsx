@@ -45,20 +45,20 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
 
   return (
     <Card className={!hasPayments ? 'opacity-60' : ''}>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="flex items-center justify-between text-base sm:text-lg">
           <span>{monthName}</span>
           {hasPayments && (
             <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-              <CollapsibleTrigger className="ml-auto text-sm font-normal text-gray-500 hover:text-gray-700 flex items-center gap-1">
+              <CollapsibleTrigger className="ml-auto text-xs sm:text-sm font-normal text-gray-500 hover:text-gray-700 flex items-center gap-1">
                 {isOpen ? (
                   <>
-                    <span>Collapse</span>
+                    <span className="hidden sm:inline">Collapse</span>
                     <ChevronUp className="h-4 w-4" />
                   </>
                 ) : (
                   <>
-                    <span>Expand</span>
+                    <span className="hidden sm:inline">Expand</span>
                     <ChevronDown className="h-4 w-4" />
                   </>
                 )}
@@ -70,7 +70,9 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
       <CardContent>
         {hasPayments ? (
           <>
-            <div className="text-lg font-semibold mb-4">{formattedTotal}</div>
+            <div className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
+              {formattedTotal}
+            </div>
             <Collapsible open={isOpen} onOpenChange={setIsOpen}>
               <CollapsibleContent>
                 <div className="space-y-1 pt-2 border-t border-gray-200">
@@ -82,7 +84,7 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
             </Collapsible>
           </>
         ) : (
-          <div className="text-sm text-gray-500 italic">
+          <div className="text-xs sm:text-sm text-gray-500 italic">
             No dividend payments expected this month
           </div>
         )}
