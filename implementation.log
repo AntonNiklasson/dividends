@@ -743,3 +743,18 @@ Time: Mon Jan 12 20:11:13 CET 2026
 Remaining tasks: 18
 Next task: Phase 42: Create StockPaymentRow component
 Attempt 1...
+✅ **Phase 42 Complete: Create StockPaymentRow component**
+
+Created `/src/components/StockPaymentRow.tsx` with:
+- Display of ticker, date, amount, currency, shares
+- Formatted date and decimal values
+- Clean layout with proper spacing and borders
+
+Linting and formatting passed. Changes committed.
+Commit created: 3d34b8c feat: Create StockPaymentRow component
+
+=== Attempting task 39 of 59 ===
+Time: Mon Jan 12 20:12:09 CET 2026
+Remaining tasks: 17
+Next task: Phase 43: Add expand/collapse to MonthCard
+Attempt 1...
