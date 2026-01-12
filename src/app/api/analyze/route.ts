@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseCsv } from '@/lib/parseCsv';
 import { fetchBatchDividends } from '@/lib/fetchDividends';
+import { calculateProjection } from '@/lib/calculateProjection';
 import type { AnalyzeResponse } from '@/lib/types';
 
 /**
@@ -105,7 +106,10 @@ export async function POST(request: NextRequest) {
       ...dividendData.errors,
     ];
 
-    // Return portfolio with dividend data (projection will be added in Phase 36)
+    // Calculate 3-year projection with DRIP
+    const projection = calculateProjection(dividendData.successfulStocks);
+
+    // Return portfolio with dividend data and projection
     return NextResponse.json(
       {
         success: true,
@@ -113,6 +117,7 @@ export async function POST(request: NextRequest) {
           stocks: dividendData.successfulStocks,
           errors: allErrors,
         },
+        projection,
       } as AnalyzeResponse,
       { status: 200 }
     );
