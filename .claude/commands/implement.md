@@ -9,6 +9,7 @@ You are implementing a task from the Dividend Portfolio Projector implementation
 ## Step 1: Read the PRD for Context
 
 First, read `dividend-projector-prd.md` to understand what you're building. This is a web app that:
+
 - Accepts CSV uploads (Avanza export format)
 - Fetches dividend data from Yahoo Finance
 - Projects 3-year dividend income with DRIP reinvestment
@@ -23,6 +24,7 @@ If all tasks are complete, inform the user and exit.
 ## Step 3: Get Task Details
 
 The Progress Tracking section shows task names like:
+
 ```
 - [ ] Phase 1: Initialize Next.js project
 ```
@@ -30,18 +32,21 @@ The Progress Tracking section shows task names like:
 Find the corresponding **Phase section** earlier in the document for full instructions. For example, "Phase 1" details are under the heading `### Phase 1: Initialize Next.js project`.
 
 Each phase includes:
+
 - Bullet points with specific steps
 - A suggested commit message (after "Commit:")
 
 ## Step 4: Implement the Task
 
 Execute all steps described in the phase. This may involve:
+
 - Running shell commands (npm, npx, etc.)
 - Creating/modifying files
 - Installing dependencies
 - Writing code
 
 **Important:**
+
 - Follow the PRD's tech stack and patterns
 - For shadcn components, use `npx shadcn@latest add <component>`
 - Verify your changes work (run dev server, tests, etc.)
@@ -67,6 +72,7 @@ Stage all changes and commit with the suggested message from the phase, or a sim
 Format: The phase usually suggests something like `Commit: "Initialize Next.js project with TypeScript"`
 
 Use that as your commit message, prefixed appropriately:
+
 - `feat:` for new features
 - `chore:` for setup/config
 - `test:` for tests
@@ -75,6 +81,7 @@ Use that as your commit message, prefixed appropriately:
 Example: `chore: Initialize Next.js project with TypeScript`
 
 Include the co-author:
+
 ```
 Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ```
