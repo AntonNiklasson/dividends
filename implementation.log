@@ -444,3 +444,20 @@ Time: Mon Jan 12 19:51:48 CET 2026
 Remaining tasks: 34
 Next task: Phase 26: Add stock price fetching
 Attempt 1...
+Excellent! **Phase 26 complete.** 
+
+Summary:
+- Extended `fetchDividends` to return `currentPrice` using Yahoo Finance quote endpoint
+- Price fetching is non-fatal (undefined if fails, won't block dividend data)
+- Linting and formatting passed
+- Implementation plan updated (Phase 26 marked complete)
+- Committed with descriptive message
+
+Next task: Phase 27 - Add batch ticker fetching
+Commit created: 2adef2e feat: Add current stock price fetching
+
+=== Attempting task 25 of 59 ===
+Time: Mon Jan 12 19:53:00 CET 2026
+Remaining tasks: 33
+Next task: Phase 27: Add batch ticker fetching
+Attempt 1...
