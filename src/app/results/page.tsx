@@ -50,6 +50,27 @@ export default function ResultsPage() {
 
             return (
               <div className="space-y-4 mt-6">
+                {/* Year Total Display */}
+                <div className="mb-8 p-6 bg-muted/50 rounded-lg border">
+                  <h2 className="text-lg font-semibold mb-3">
+                    Total for {year}
+                  </h2>
+                  <div className="flex flex-wrap gap-4">
+                    {Object.entries(yearData.yearTotal).map(
+                      ([currency, amount]) => (
+                        <div key={currency} className="text-2xl font-bold">
+                          {new Intl.NumberFormat('sv-SE', {
+                            style: 'currency',
+                            currency: currency,
+                            minimumFractionDigits: 2,
+                          }).format(amount)}
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                {/* Monthly Breakdown */}
                 {yearData.months.map((monthData) => (
                   <MonthCard
                     key={monthData.month}
