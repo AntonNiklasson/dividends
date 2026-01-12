@@ -577,7 +577,7 @@ Use this checklist to track completion:
 - [x] Phase 39: Create portfolio Jotai atom
 - [x] Phase 40: Create YearTabs component
 - [x] Phase 41: Create MonthCard component (static)
-- [ ] Phase 42: Create StockPaymentRow component
+- [x] Phase 42: Create StockPaymentRow component
 - [ ] Phase 43: Add expand/collapse to MonthCard
 - [ ] Phase 44: Wire up results page with real data
 - [ ] Phase 45: Create ErrorBanner component
