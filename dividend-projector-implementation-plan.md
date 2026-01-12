@@ -543,7 +543,7 @@ Use this checklist to track completion:
 - [x] Phase 17: Create TypeScript types
 - [x] Phase 18: Implement parseCsv function
 - [x] Phase 19: Map Avanza columns to portfolio data
-- [ ] Phase 20: Add parse validation
+- [x] Phase 20: Add parse validation
 - [ ] Phase 21: Write parseCsv unit tests
 
 ### API Route Foundation (22–24)
