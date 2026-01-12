@@ -1,13 +1,23 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
 import { portfolioAtom } from '@/store/portfolioAtom';
 import YearTabs from '@/components/YearTabs';
 import MonthCard from '@/components/MonthCard';
 import ErrorBanner from '@/components/ErrorBanner';
+import { Button } from '@/components/ui/button';
 
 export default function ResultsPage() {
-  const [portfolioData] = useAtom(portfolioAtom);
+  const [portfolioData, setPortfolioData] = useAtom(portfolioAtom);
+  const router = useRouter();
+
+  const handleUploadNew = () => {
+    // Clear the portfolio state
+    setPortfolioData(null);
+    // Navigate back to home
+    router.push('/');
+  };
 
   if (!portfolioData?.success || !portfolioData.projection) {
     return (
@@ -27,10 +37,17 @@ export default function ResultsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold">Dividend Projection</h1>
-        <p className="mt-2 text-muted-foreground">
-          Your 3-year dividend income projection with DRIP reinvestment
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Dividend Projection</h1>
+            <p className="mt-2 text-muted-foreground">
+              Your 3-year dividend income projection with DRIP reinvestment
+            </p>
+          </div>
+          <Button onClick={handleUploadNew} variant="outline">
+            Upload New File
+          </Button>
+        </div>
       </header>
 
       <main>
