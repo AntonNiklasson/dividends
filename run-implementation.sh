@@ -13,6 +13,13 @@ echo "Starting implementation loop at $(date)" | tee -a "$LOG_FILE"
 echo "==========================================" | tee -a "$LOG_FILE"
 
 for i in $(seq 1 $MAX_TASKS); do
+  # Check for stop file (touch .stop to halt gracefully)
+  if [ -f ".stop" ]; then
+    echo "Stop file detected, exiting gracefully" | tee -a "$LOG_FILE"
+    rm .stop
+    exit 0
+  fi
+
   echo "" | tee -a "$LOG_FILE"
   echo "=== Attempting task $i of $MAX_TASKS ===" | tee -a "$LOG_FILE"
   echo "Time: $(date)" | tee -a "$LOG_FILE"
