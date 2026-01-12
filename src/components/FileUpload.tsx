@@ -3,16 +3,20 @@
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Progress } from './ui/progress';
 import { Upload, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 import { useState, useRef } from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { uploadAtom } from '@/store/uploadAtom';
+import { portfolioAtom } from '@/store/portfolioAtom';
+import type { AnalyzeResponse } from '@/lib/types';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useAtom(uploadAtom);
+  const setPortfolio = useSetAtom(portfolioAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -67,7 +71,7 @@ export default function FileUpload() {
     return null;
   };
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     // Validate file before processing
     const validationError = validateFile(file);
     if (validationError) {
@@ -85,31 +89,64 @@ export default function FileUpload() {
       error: null,
     });
 
-    // Simulate upload for now - will be replaced with actual API call in Phase 47
-    setTimeout(() => {
+    try {
+      // Create FormData and append file
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Call API endpoint
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data: AnalyzeResponse = await response.json();
+
+      // Check if request was successful
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to analyze portfolio');
+      }
+
+      // Store successful response in portfolioAtom
+      setPortfolio(data);
+
+      // Update upload status to success
       setUploadStatus({
         state: 'success',
         file,
         error: null,
       });
-    }, 1000);
+    } catch (error) {
+      // Handle errors
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unexpected error occurred';
+
+      setUploadStatus({
+        state: 'error',
+        file: null,
+        error: errorMessage,
+      });
+    }
   };
 
   const renderContent = () => {
     switch (uploadStatus.state) {
       case 'uploading':
         return (
-          <div className="flex flex-col items-center justify-center gap-4 text-center">
+          <div className="flex flex-col items-center justify-center gap-4 text-center w-full">
             <div className="w-16 h-16 rounded-full flex items-center justify-center bg-blue-100">
               <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 w-full">
               <h3 className="text-lg font-semibold text-gray-900">
                 Processing...
               </h3>
               <p className="text-sm text-gray-500">
                 Analyzing your portfolio file
               </p>
+              <div className="w-full pt-2">
+                <Progress value={undefined} className="w-full" />
+              </div>
             </div>
           </div>
         );

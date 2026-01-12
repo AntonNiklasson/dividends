@@ -585,7 +585,7 @@ Use this checklist to track completion:
 
 ### Integration & Navigation (47–50)
 
-- [ ] Phase 47: Connect upload to API
+- [x] Phase 47: Connect upload to API
 - [ ] Phase 48: Navigate to results on success
 - [ ] Phase 49: Add "Upload new file" button
 - [ ] Phase 50: Handle API errors in UI
