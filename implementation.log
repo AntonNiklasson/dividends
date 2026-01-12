@@ -879,3 +879,24 @@ Time: Mon Jan 12 20:19:15 CET 2026
 Remaining tasks: 12
 Next task: Phase 48: Navigate to results on success
 Attempt 1...
+Perfect! Phase 48 is complete. 
+
+## Summary
+
+**Phase 48: Navigate to results on success** — Complete ✓
+
+Changes made:
+- Added `useRouter` hook import from `next/navigation`
+- Initialized router in FileUpload component  
+- Added `router.push('/results')` after successful upload and portfolio data storage
+- Updated implementation plan to mark Phase 48 as complete
+- All linting and formatting checks pass
+
+When a file is successfully uploaded and analyzed, the app now automatically navigates the user to the `/results` page where they can view their dividend projections.
+Commit created: cbc7949 feat: Navigate to results page on success
+
+=== Attempting task 45 of 59 ===
+Time: Mon Jan 12 20:20:15 CET 2026
+Remaining tasks: 11
+Next task: Phase 49: Add "Upload new file" button
+Attempt 1...
