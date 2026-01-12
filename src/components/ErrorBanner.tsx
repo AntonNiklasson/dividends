@@ -21,14 +21,12 @@ export default function ErrorBanner({
   }
 
   return (
-    <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+    <div className="space-y-4 mb-6">
       {hasTickerErrors && (
-        <Alert variant="destructive" className="text-sm">
+        <Alert variant="destructive">
           <XCircle className="h-4 w-4" />
-          <AlertTitle className="text-sm sm:text-base">
-            Ticker Lookup Failed
-          </AlertTitle>
-          <AlertDescription className="text-xs sm:text-sm">
+          <AlertTitle>Ticker Lookup Failed</AlertTitle>
+          <AlertDescription className="text-sm">
             <p className="mb-2">
               Could not find dividend data for the following tickers:
             </p>
@@ -44,12 +42,10 @@ export default function ErrorBanner({
       )}
 
       {hasNoDividendStocks && (
-        <Alert className="text-sm">
+        <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle className="text-sm sm:text-base">
-            No Dividend History
-          </AlertTitle>
-          <AlertDescription className="text-xs sm:text-sm">
+          <AlertTitle>No Dividend History</AlertTitle>
+          <AlertDescription className="text-sm">
             <p className="mb-2">
               The following stocks have no dividend payments in the last 12
               months and are excluded from projections:

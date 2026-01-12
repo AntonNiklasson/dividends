@@ -44,13 +44,13 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
   const hasPayments = payments.length > 0;
 
   return (
-    <Card className={!hasPayments ? 'opacity-60' : ''}>
-      <CardHeader className="pb-3 sm:pb-6">
-        <CardTitle className="flex items-center justify-between text-base sm:text-lg">
-          <span>{monthName}</span>
+    <Card className={`transition-opacity ${!hasPayments ? 'opacity-60' : ''}`}>
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center justify-between text-lg">
+          <span className="font-semibold">{monthName}</span>
           {hasPayments && (
             <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-              <CollapsibleTrigger className="ml-auto text-xs sm:text-sm font-normal text-gray-500 hover:text-gray-700 flex items-center gap-1">
+              <CollapsibleTrigger className="ml-auto text-sm font-normal text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
                 {isOpen ? (
                   <>
                     <span className="hidden sm:inline">Collapse</span>
@@ -70,12 +70,10 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
       <CardContent>
         {hasPayments ? (
           <>
-            <div className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
-              {formattedTotal}
-            </div>
+            <div className="text-lg font-semibold mb-4">{formattedTotal}</div>
             <Collapsible open={isOpen} onOpenChange={setIsOpen}>
               <CollapsibleContent>
-                <div className="space-y-1 pt-2 border-t border-gray-200">
+                <div className="space-y-1 pt-3 border-t">
                   {payments.map((payment, index) => (
                     <StockPaymentRow key={index} payment={payment} />
                   ))}
@@ -84,7 +82,7 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
             </Collapsible>
           </>
         ) : (
-          <div className="text-xs sm:text-sm text-gray-500 italic">
+          <div className="text-sm text-muted-foreground italic">
             No dividend payments expected this month
           </div>
         )}
