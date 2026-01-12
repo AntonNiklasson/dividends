@@ -557,7 +557,7 @@ Use this checklist to track completion:
 - [x] Phase 25: Create fetchDividends function
 - [x] Phase 26: Add stock price fetching
 - [x] Phase 27: Add batch ticker fetching
-- [ ] Phase 28: Write fetchDividends unit tests
+- [x] Phase 28: Write fetchDividends unit tests
 - [ ] Phase 29: Integrate dividend fetching into API
 
 ### Projection Engine (30–36)
