@@ -44,7 +44,7 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
   const hasPayments = payments.length > 0;
 
   return (
-    <Card>
+    <Card className={!hasPayments ? 'opacity-60' : ''}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>{monthName}</span>
@@ -68,19 +68,23 @@ export default function MonthCard({ month, total, payments }: MonthCardProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-lg font-semibold mb-4">
-          {formattedTotal || 'No dividends'}
-        </div>
-        {hasPayments && (
-          <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-            <CollapsibleContent>
-              <div className="space-y-1 pt-2 border-t border-gray-200">
-                {payments.map((payment, index) => (
-                  <StockPaymentRow key={index} payment={payment} />
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+        {hasPayments ? (
+          <>
+            <div className="text-lg font-semibold mb-4">{formattedTotal}</div>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+              <CollapsibleContent>
+                <div className="space-y-1 pt-2 border-t border-gray-200">
+                  {payments.map((payment, index) => (
+                    <StockPaymentRow key={index} payment={payment} />
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </>
+        ) : (
+          <div className="text-sm text-gray-500 italic">
+            No dividend payments expected this month
+          </div>
         )}
       </CardContent>
     </Card>

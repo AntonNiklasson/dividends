@@ -916,3 +916,28 @@ Time: Mon Jan 12 20:23:13 CET 2026
 Remaining tasks: 9
 Next task: Phase 51: Add loading states
 Attempt 1...
+Perfect! **Phase 51 complete.**
+
+## Summary
+
+Added Skeleton loading states:
+
+1. ✅ Installed shadcn Skeleton component
+2. ✅ Created `portfolioLoadingAtom` in `src/store/portfolioAtom.ts`
+3. ✅ Updated `FileUpload.tsx` to set loading state during API call
+4. ✅ Added loading UI to `results/page.tsx` with skeletons for:
+   - Header (title, description, button)
+   - Year tabs
+   - Year total card
+   - Month cards (3 placeholders)
+5. ✅ Lint & format passed
+6. ✅ Committed as `feat: Add Skeleton loading states`
+
+Next task: **Phase 52: Add empty state for months**
+Commit created: 506ce43 feat: Add Skeleton loading states
+
+=== Attempting task 48 of 59 ===
+Time: Mon Jan 12 20:25:10 CET 2026
+Remaining tasks: 8
+Next task: Phase 52: Add empty state for months
+Attempt 1...
