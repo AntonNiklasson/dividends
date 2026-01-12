@@ -522,3 +522,21 @@ Time: Mon Jan 12 19:58:36 CET 2026
 Remaining tasks: 31
 Next task: Phase 29: Integrate dividend fetching into API
 Attempt 1...
+**Phase 29 complete!**
+
+Integrated dividend fetching into API route:
+- Import/call `fetchBatchDividends` in analyze endpoint
+- Fetch dividend data + current prices for all stocks
+- Combine parsing errors with dividend fetching errors
+- Return `StockWithDividends[]` with actual dividend data
+- Handle partial failures (some tickers may fail)
+- Flag non-dividend stocks with `hasDividends: false`
+
+Next task: Phase 30 - Define projection types
+Commit created: 5f81bf0 feat: Integrate dividend fetching into API route
+
+=== Attempting task 28 of 59 ===
+Time: Mon Jan 12 19:59:48 CET 2026
+Remaining tasks: 30
+Next task: Phase 30: Define projection types
+Attempt 1...
