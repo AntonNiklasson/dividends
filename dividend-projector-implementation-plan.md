@@ -581,7 +581,7 @@ Use this checklist to track completion:
 - [x] Phase 43: Add expand/collapse to MonthCard
 - [x] Phase 44: Wire up results page with real data
 - [x] Phase 45: Create ErrorBanner component
-- [ ] Phase 46: Display year totals
+- [x] Phase 46: Display year totals
 
 ### Integration & Navigation (47–50)
 
