@@ -588,7 +588,7 @@ Use this checklist to track completion:
 - [x] Phase 47: Connect upload to API
 - [x] Phase 48: Navigate to results on success
 - [x] Phase 49: Add "Upload new file" button
-- [ ] Phase 50: Handle API errors in UI
+- [x] Phase 50: Handle API errors in UI
 
 ### Polish (51–55)
 
