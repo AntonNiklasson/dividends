@@ -5,7 +5,7 @@ export interface AvanzaRow {
   Kortnamn: string;
   Volym: string;
   Marknadsvärde: string;
-  "GAV (SEK)": string;
+  'GAV (SEK)': string;
   GAV: string;
   Valuta: string;
   Land: string;

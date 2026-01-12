@@ -1,12 +1,12 @@
-import Papa from "papaparse";
-import type { AvanzaRow, ParsedPortfolio, PortfolioStock } from "./types";
+import Papa from 'papaparse';
+import type { AvanzaRow, ParsedPortfolio, PortfolioStock } from './types';
 
 /**
  * Parse Swedish decimal format (comma separator) to JS number
  * Example: "12,5" -> 12.5
  */
 function parseSwedishDecimal(value: string): number {
-  return parseFloat(value.replace(",", "."));
+  return parseFloat(value.replace(',', '.'));
 }
 
 /**
@@ -18,7 +18,7 @@ function parseSwedishDecimal(value: string): number {
 export function parseCsv(csvContent: string): ParsedPortfolio {
   const result = Papa.parse<AvanzaRow>(csvContent, {
     header: true,
-    delimiter: ";",
+    delimiter: ';',
     skipEmptyLines: true,
   });
 
@@ -28,8 +28,26 @@ export function parseCsv(csvContent: string): ParsedPortfolio {
   // Check for parsing errors
   if (result.errors.length > 0) {
     errors.push(
-      `CSV parsing errors: ${result.errors.map((e) => e.message).join(", ")}`
+      `CSV parsing errors: ${result.errors.map((e) => e.message).join(', ')}`
     );
+  }
+
+  // Validate required columns are present
+  const requiredColumns = ['Kortnamn', 'Volym'];
+  const headers = result.meta.fields || [];
+
+  for (const column of requiredColumns) {
+    if (!headers.includes(column)) {
+      errors.push(`Missing required column: ${column}`);
+    }
+  }
+
+  // If required columns are missing, return early
+  if (errors.some((error) => error.startsWith('Missing required column'))) {
+    return {
+      stocks: [],
+      errors,
+    };
   }
 
   // Process each row
@@ -57,9 +75,9 @@ export function parseCsv(csvContent: string): ParsedPortfolio {
       // Filter: only include STOCK and EXCHANGE_TRADED_FUND
       // Skip FUND and other types as they don't pay traditional dividends
       if (
-        type !== "STOCK" &&
-        type !== "EXCHANGE_TRADED_FUND" &&
-        type !== "ETF"
+        type !== 'STOCK' &&
+        type !== 'EXCHANGE_TRADED_FUND' &&
+        type !== 'ETF'
       ) {
         continue;
       }
@@ -77,15 +95,20 @@ export function parseCsv(csvContent: string): ParsedPortfolio {
         ticker,
         name: name || ticker,
         shares,
-        currency: currency || "SEK",
-        isin: isin || "",
-        type: type || "UNKNOWN",
+        currency: currency || 'SEK',
+        isin: isin || '',
+        type: type || 'UNKNOWN',
       });
     } catch (error) {
       errors.push(
-        `Error processing row: ${error instanceof Error ? error.message : "Unknown error"}`
+        `Error processing row: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
+  }
+
+  // Validate that at least some valid stock data was found
+  if (stocks.length === 0 && errors.length === 0) {
+    errors.push('No valid stock data found in file');
   }
 
   return {

@@ -267,3 +267,21 @@ Time: Mon Jan 12 19:42:51 CET 2026
 Remaining tasks: 41
 Next task: Phase 19: Map Avanza columns to portfolio data
 Attempt 1...
+Perfect! Phase 19 complete. Summary:
+
+**Phase 19: Map Avanza columns to portfolio data** ✓
+
+Added type filtering to parseCsv function:
+- Only includes STOCK, EXCHANGE_TRADED_FUND, and ETF types
+- Skips FUND and other non-dividend-paying instruments
+- ISIN mapping already in place for reliable identification
+- All required Avanza columns (Kortnamn→ticker, Volym→shares, Valuta→currency, Typ→type filtering) now properly mapped
+
+Changes committed to `src/lib/parseCsv.ts:57-65`
+Commit created: b45ff1f feat: Map Avanza columns to portfolio data
+
+=== Attempting task 18 of 59 ===
+Time: Mon Jan 12 19:43:35 CET 2026
+Remaining tasks: 40
+Next task: Phase 20: Add parse validation
+Attempt 1...
