@@ -7,6 +7,7 @@ import { Progress } from './ui/progress';
 import { Upload, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
 import { uploadAtom } from '@/store/uploadAtom';
 import { portfolioAtom } from '@/store/portfolioAtom';
 import type { AnalyzeResponse } from '@/lib/types';
@@ -18,6 +19,7 @@ export default function FileUpload() {
   const [uploadStatus, setUploadStatus] = useAtom(uploadAtom);
   const setPortfolio = useSetAtom(portfolioAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -116,6 +118,9 @@ export default function FileUpload() {
         file,
         error: null,
       });
+
+      // Navigate to results page
+      router.push('/results');
     } catch (error) {
       // Handle errors
       const errorMessage =
