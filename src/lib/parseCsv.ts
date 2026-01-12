@@ -54,6 +54,16 @@ export function parseCsv(csvContent: string): ParsedPortfolio {
         continue;
       }
 
+      // Filter: only include STOCK and EXCHANGE_TRADED_FUND
+      // Skip FUND and other types as they don't pay traditional dividends
+      if (
+        type !== "STOCK" &&
+        type !== "EXCHANGE_TRADED_FUND" &&
+        type !== "ETF"
+      ) {
+        continue;
+      }
+
       // Parse shares with Swedish decimal format
       const shares = parseSwedishDecimal(volym);
 

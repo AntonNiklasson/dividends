@@ -248,3 +248,22 @@ Time: Mon Jan 12 19:41:14 CET 2026
 Remaining tasks: 42
 Next task: Phase 18: Implement parseCsv function
 Attempt 1...
+Perfect! **Phase 18 complete**. 
+
+Created `lib/parseCsv.ts` with:
+- papaparse integration
+- Semicolon delimiter support
+- Swedish decimal format conversion (comma → dot)
+- Portfolio stock extraction
+- Error collection
+
+Verified functionality with test data showing correct parsing of 14 shares, 1 share, and 72.5 shares (decimal).
+
+Commit: `46f1bde`
+Commit created: 46f1bde feat: Implement CSV parsing with papaparse
+
+=== Attempting task 17 of 59 ===
+Time: Mon Jan 12 19:42:51 CET 2026
+Remaining tasks: 41
+Next task: Phase 19: Map Avanza columns to portfolio data
+Attempt 1...
