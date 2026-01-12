@@ -39,11 +39,17 @@ export async function fetchDividends(ticker: string): Promise<{
       events: 'dividends' as const,
     };
 
-    const result = (await yahooFinance.historical(ticker, queryOptions)) as YahooHistoricalDividendRow[];
+    const result = (await yahooFinance.historical(
+      ticker,
+      queryOptions
+    )) as YahooHistoricalDividendRow[];
 
     // Filter to only dividend events and map to our format
     const dividends: DividendPayment[] = result
-      .filter((item): item is YahooHistoricalDividendRow => 'dividends' in item && !!item.dividends)
+      .filter(
+        (item): item is YahooHistoricalDividendRow =>
+          'dividends' in item && !!item.dividends
+      )
       .map((item) => ({
         date: item.date,
         amount: item.dividends,
@@ -103,7 +109,9 @@ export async function fetchDividends(ticker: string): Promise<{
  * Converts DividendPayment[] to DividendScheduleEntry[]
  * Extracts month, day, and amount from the historical dividend data
  */
-function convertToSchedule(dividends: DividendPayment[]): DividendScheduleEntry[] {
+function convertToSchedule(
+  dividends: DividendPayment[]
+): DividendScheduleEntry[] {
   return dividends.map((div) => ({
     month: div.date.getMonth() + 1, // getMonth() returns 0-11, we want 1-12
     day: div.date.getDate(),
@@ -116,9 +124,7 @@ function convertToSchedule(dividends: DividendPayment[]): DividendScheduleEntry[
  * Handles partial failures - continues processing even if some tickers fail
  * Returns successful stocks and errors separately
  */
-export async function fetchBatchDividends(
-  stocks: PortfolioStock[]
-): Promise<{
+export async function fetchBatchDividends(stocks: PortfolioStock[]): Promise<{
   successfulStocks: StockWithDividends[];
   errors: TickerError[];
 }> {
@@ -131,7 +137,11 @@ export async function fetchBatchDividends(
       const result = await fetchDividends(stock.ticker);
 
       // Handle stocks with errors
-      if (result.error && result.dividends.length === 0 && !result.currentPrice) {
+      if (
+        result.error &&
+        result.dividends.length === 0 &&
+        !result.currentPrice
+      ) {
         // Fatal error - couldn't fetch ticker at all
         errors.push({
           ticker: stock.ticker,
@@ -141,7 +151,10 @@ export async function fetchBatchDividends(
       }
 
       // Handle stocks with no dividend history but valid ticker
-      if (result.dividends.length === 0 || result.error?.includes('No dividend history')) {
+      if (
+        result.dividends.length === 0 ||
+        result.error?.includes('No dividend history')
+      ) {
         // Valid ticker but no dividends - still include with flag
         successfulStocks.push({
           ticker: stock.ticker,

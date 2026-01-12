@@ -34,8 +34,12 @@ describe('fetchDividends', () => {
       // Mock current price data
       const mockQuote = { regularMarketPrice: 185.5 };
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(mockDividends as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue(mockQuote as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.historical).mockResolvedValue(
+        mockDividends as unknown as HistoricalResponse
+      );
+      vi.mocked(yahooFinance.quote).mockResolvedValue(
+        mockQuote as unknown as QuoteResponse
+      );
 
       const result = await fetchDividends('AAPL');
 
@@ -49,14 +53,16 @@ describe('fetchDividends', () => {
     });
 
     it('should handle stocks with partial dividend data', async () => {
-      const mockDividends = [
-        { date: new Date('2025-06-15'), dividends: 1.5 },
-      ];
+      const mockDividends = [{ date: new Date('2025-06-15'), dividends: 1.5 }];
 
       const mockQuote = { regularMarketPrice: 45.2 };
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(mockDividends as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue(mockQuote as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.historical).mockResolvedValue(
+        mockDividends as unknown as HistoricalResponse
+      );
+      vi.mocked(yahooFinance.quote).mockResolvedValue(
+        mockQuote as unknown as QuoteResponse
+      );
 
       const result = await fetchDividends('XYZ');
 
@@ -69,14 +75,20 @@ describe('fetchDividends', () => {
   describe('stocks with no dividends', () => {
     it('should return error message when no dividends found in last 12 months', async () => {
       // Mock empty dividend history
-      vi.mocked(yahooFinance.historical).mockResolvedValue([] as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue({ regularMarketPrice: 250.0 } as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.historical).mockResolvedValue(
+        [] as unknown as HistoricalResponse
+      );
+      vi.mocked(yahooFinance.quote).mockResolvedValue({
+        regularMarketPrice: 250.0,
+      } as unknown as QuoteResponse);
 
       const result = await fetchDividends('TSLA');
 
       expect(result.dividends).toHaveLength(0);
       expect(result.currentPrice).toBe(250.0);
-      expect(result.error).toBe('No dividend history found in the last 12 months');
+      expect(result.error).toBe(
+        'No dividend history found in the last 12 months'
+      );
     });
 
     it('should filter out non-dividend events', async () => {
@@ -87,13 +99,17 @@ describe('fetchDividends', () => {
         { date: new Date('2025-08-15'), dividends: 0.24 },
       ];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(mockData as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue({ regularMarketPrice: 185.5 } as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.historical).mockResolvedValue(
+        mockData as unknown as HistoricalResponse
+      );
+      vi.mocked(yahooFinance.quote).mockResolvedValue({
+        regularMarketPrice: 185.5,
+      } as unknown as QuoteResponse);
 
       const result = await fetchDividends('AAPL');
 
       expect(result.dividends).toHaveLength(2);
-      expect(result.dividends.every(d => d.amount > 0)).toBe(true);
+      expect(result.dividends.every((d) => d.amount > 0)).toBe(true);
     });
   });
 
@@ -140,17 +156,19 @@ describe('fetchDividends', () => {
       const result = await fetchDividends('AAPL');
 
       expect(result.dividends).toHaveLength(0);
-      expect(result.error).toBe('Unknown error occurred while fetching dividends');
+      expect(result.error).toBe(
+        'Unknown error occurred while fetching dividends'
+      );
     });
   });
 
   describe('current price errors', () => {
     it('should return dividend data even if price fetch fails', async () => {
-      const mockDividends = [
-        { date: new Date('2025-11-15'), dividends: 0.24 },
-      ];
+      const mockDividends = [{ date: new Date('2025-11-15'), dividends: 0.24 }];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(mockDividends as unknown as HistoricalResponse);
+      vi.mocked(yahooFinance.historical).mockResolvedValue(
+        mockDividends as unknown as HistoricalResponse
+      );
       vi.mocked(yahooFinance.quote).mockRejectedValue(
         new Error('Failed to fetch price')
       );
@@ -163,12 +181,14 @@ describe('fetchDividends', () => {
     });
 
     it('should handle missing regularMarketPrice in quote response', async () => {
-      const mockDividends = [
-        { date: new Date('2025-11-15'), dividends: 0.24 },
-      ];
+      const mockDividends = [{ date: new Date('2025-11-15'), dividends: 0.24 }];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(mockDividends as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue({} as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.historical).mockResolvedValue(
+        mockDividends as unknown as HistoricalResponse
+      );
+      vi.mocked(yahooFinance.quote).mockResolvedValue(
+        {} as unknown as QuoteResponse
+      );
 
       const result = await fetchDividends('AAPL');
 
@@ -215,8 +235,12 @@ describe('fetchBatchDividends', () => {
         ] as unknown as HistoricalResponse);
 
       vi.mocked(yahooFinance.quote)
-        .mockResolvedValueOnce({ regularMarketPrice: 185.5 } as unknown as QuoteResponse)
-        .mockResolvedValueOnce({ regularMarketPrice: 425.3 } as unknown as QuoteResponse);
+        .mockResolvedValueOnce({
+          regularMarketPrice: 185.5,
+        } as unknown as QuoteResponse)
+        .mockResolvedValueOnce({
+          regularMarketPrice: 425.3,
+        } as unknown as QuoteResponse);
 
       const result = await fetchBatchDividends(stocks);
 
@@ -249,7 +273,9 @@ describe('fetchBatchDividends', () => {
         { date: new Date('2025-08-01'), dividends: 0.24 },
       ] as unknown as HistoricalResponse);
 
-      vi.mocked(yahooFinance.quote).mockResolvedValue({ regularMarketPrice: 185.5 } as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.quote).mockResolvedValue({
+        regularMarketPrice: 185.5,
+      } as unknown as QuoteResponse);
 
       const result = await fetchBatchDividends(stocks);
 
@@ -292,10 +318,13 @@ describe('fetchBatchDividends', () => {
         .mockResolvedValueOnce([
           { date: new Date('2025-11-15'), dividends: 0.24 },
         ] as unknown as HistoricalResponse)
-        .mockRejectedValueOnce(new Error('Not Found: No data found for ticker'));
+        .mockRejectedValueOnce(
+          new Error('Not Found: No data found for ticker')
+        );
 
-      vi.mocked(yahooFinance.quote)
-        .mockResolvedValueOnce({ regularMarketPrice: 185.5 } as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        regularMarketPrice: 185.5,
+      } as unknown as QuoteResponse);
 
       const result = await fetchBatchDividends(stocks);
 
@@ -321,8 +350,12 @@ describe('fetchBatchDividends', () => {
         },
       ];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue([] as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue({ regularMarketPrice: 250.0 } as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.historical).mockResolvedValue(
+        [] as unknown as HistoricalResponse
+      );
+      vi.mocked(yahooFinance.quote).mockResolvedValue({
+        regularMarketPrice: 250.0,
+      } as unknown as QuoteResponse);
 
       const result = await fetchBatchDividends(stocks);
 
@@ -350,7 +383,9 @@ describe('fetchBatchDividends', () => {
       vi.mocked(yahooFinance.historical).mockResolvedValue([
         { date: new Date('2025-11-15'), dividends: 0.24 },
       ] as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue({} as unknown as QuoteResponse);
+      vi.mocked(yahooFinance.quote).mockResolvedValue(
+        {} as unknown as QuoteResponse
+      );
 
       const result = await fetchBatchDividends(stocks);
 
@@ -394,14 +429,24 @@ describe('fetchBatchDividends', () => {
 
       // Mock responses for all three tickers
       vi.mocked(yahooFinance.historical)
-        .mockResolvedValueOnce([{ date: new Date('2025-11-15'), dividends: 0.24 }] as unknown as HistoricalResponse)
-        .mockResolvedValueOnce([{ date: new Date('2025-11-15'), dividends: 0.75 }] as unknown as HistoricalResponse)
+        .mockResolvedValueOnce([
+          { date: new Date('2025-11-15'), dividends: 0.24 },
+        ] as unknown as HistoricalResponse)
+        .mockResolvedValueOnce([
+          { date: new Date('2025-11-15'), dividends: 0.75 },
+        ] as unknown as HistoricalResponse)
         .mockResolvedValueOnce([] as unknown as HistoricalResponse);
 
       vi.mocked(yahooFinance.quote)
-        .mockResolvedValueOnce({ regularMarketPrice: 185.5 } as unknown as QuoteResponse)
-        .mockResolvedValueOnce({ regularMarketPrice: 425.3 } as unknown as QuoteResponse)
-        .mockResolvedValueOnce({ regularMarketPrice: 140.2 } as unknown as QuoteResponse);
+        .mockResolvedValueOnce({
+          regularMarketPrice: 185.5,
+        } as unknown as QuoteResponse)
+        .mockResolvedValueOnce({
+          regularMarketPrice: 425.3,
+        } as unknown as QuoteResponse)
+        .mockResolvedValueOnce({
+          regularMarketPrice: 140.2,
+        } as unknown as QuoteResponse);
 
       const result = await fetchBatchDividends(stocks);
 
@@ -409,7 +454,7 @@ describe('fetchBatchDividends', () => {
       expect(result.errors).toHaveLength(0);
 
       // Verify all three were processed
-      const tickers = result.successfulStocks.map(s => s.ticker).sort();
+      const tickers = result.successfulStocks.map((s) => s.ticker).sort();
       expect(tickers).toEqual(['AAPL', 'GOOGL', 'MSFT']);
     });
   });
