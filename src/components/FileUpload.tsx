@@ -9,7 +9,7 @@ import { useState, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { uploadAtom } from '@/store/uploadAtom';
-import { portfolioAtom } from '@/store/portfolioAtom';
+import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
 import type { AnalyzeResponse } from '@/lib/types';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -18,6 +18,7 @@ export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useAtom(uploadAtom);
   const setPortfolio = useSetAtom(portfolioAtom);
+  const setPortfolioLoading = useSetAtom(portfolioLoadingAtom);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -90,6 +91,7 @@ export default function FileUpload() {
       file,
       error: null,
     });
+    setPortfolioLoading(true);
 
     try {
       // Create FormData and append file
@@ -111,6 +113,7 @@ export default function FileUpload() {
 
       // Store successful response in portfolioAtom
       setPortfolio(data);
+      setPortfolioLoading(false);
 
       // Update upload status to success
       setUploadStatus({
@@ -126,6 +129,7 @@ export default function FileUpload() {
       const errorMessage =
         error instanceof Error ? error.message : 'An unexpected error occurred';
 
+      setPortfolioLoading(false);
       setUploadStatus({
         state: 'error',
         file: null,
