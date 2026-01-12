@@ -1,17 +1,25 @@
+import { Card } from '@/components/ui/card';
+
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-      <main className="flex flex-col items-center gap-8 p-8">
-        <h1 className="text-4xl font-bold text-zinc-900 dark:text-white">
-          Dividend Portfolio Projector
-        </h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400">
-          Upload your portfolio to project dividend income
-        </p>
-        <div className="rounded-lg bg-blue-500 px-6 py-3 text-white hover:bg-blue-600">
-          Tailwind CSS is working!
+    <div className="flex justify-center">
+      <Card className="w-full max-w-2xl p-8">
+        <div className="space-y-6">
+          <div className="space-y-2 text-center">
+            <h2 className="text-xl font-semibold text-foreground">
+              Upload Your Portfolio
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Upload a CSV export from Avanza to project your dividend income
+              for the next 3 years
+            </p>
+          </div>
+          {/* File upload component will go here */}
+          <div className="flex min-h-48 items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/50">
+            <p className="text-muted-foreground">File upload component</p>
+          </div>
         </div>
-      </main>
+      </Card>
     </div>
   );
 }
