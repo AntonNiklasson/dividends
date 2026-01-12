@@ -580,7 +580,7 @@ Use this checklist to track completion:
 - [x] Phase 42: Create StockPaymentRow component
 - [x] Phase 43: Add expand/collapse to MonthCard
 - [x] Phase 44: Wire up results page with real data
-- [ ] Phase 45: Create ErrorBanner component
+- [x] Phase 45: Create ErrorBanner component
 - [ ] Phase 46: Display year totals
 
 ### Integration & Navigation (47–50)
