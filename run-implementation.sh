@@ -13,6 +13,13 @@ echo "Starting implementation loop at $(date)" | tee -a "$LOG_FILE"
 echo "==========================================" | tee -a "$LOG_FILE"
 
 for i in $(seq 1 $MAX_TASKS); do
+  # Check for stop file (touch .stop to halt gracefully)
+  if [ -f ".stop" ]; then
+    echo "Stop file detected, exiting gracefully" | tee -a "$LOG_FILE"
+    rm .stop
+    exit 0
+  fi
+
   echo "" | tee -a "$LOG_FILE"
   echo "=== Attempting task $i of $MAX_TASKS ===" | tee -a "$LOG_FILE"
   echo "Time: $(date)" | tee -a "$LOG_FILE"
@@ -32,14 +39,14 @@ for i in $(seq 1 $MAX_TASKS); do
   echo "Next task: $NEXT_TASK" | tee -a "$LOG_FILE"
 
   # Run Claude with /implement
-  # --yes auto-accepts prompts, --dangerously-skip-permissions skips permission checks
+  # --dangerously-skip-permissions skips permission checks
   RETRY=0
   SUCCESS=false
 
   while [ $RETRY -lt $RETRY_LIMIT ] && [ "$SUCCESS" = false ]; do
     echo "Attempt $((RETRY + 1))..." | tee -a "$LOG_FILE"
 
-    if claude --yes --dangerously-skip-permissions -p "/implement" 2>&1 | tee -a "$LOG_FILE"; then
+    if claude --dangerously-skip-permissions -p "/implement" 2>&1 | tee -a "$LOG_FILE"; then
       # Check if a commit was made in the last 5 minutes
       if git log -1 --since="5 minutes ago" --oneline 2>/dev/null | grep -q .; then
         LAST_COMMIT=$(git log -1 --oneline)
