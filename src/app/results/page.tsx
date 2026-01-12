@@ -12,5 +12,5 @@ export default function ResultsPage() {
         <p className="text-muted-foreground">Results will be displayed here</p>
       </main>
     </div>
-  )
+  );
 }
