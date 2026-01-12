@@ -851,3 +851,31 @@ Time: Mon Jan 12 20:17:34 CET 2026
 Remaining tasks: 13
 Next task: Phase 47: Connect upload to API
 Attempt 1...
+Perfect! Phase 47 completed successfully. 
+
+## Summary
+
+Implemented Phase 47: Connect upload to API
+
+**Changes made:**
+- Replaced simulated upload (setTimeout) with actual API call to `/api/analyze`
+- Added FormData construction to send file to API
+- Integrated portfolioAtom to store successful API response
+- Added Progress component to uploading state for better UX
+- Implemented proper error handling for API failures
+- Used async/await pattern for clean asynchronous code
+
+**Verification:**
+- ✅ Linting passed
+- ✅ Formatting passed  
+- ✅ Build succeeded
+- ✅ Committed with descriptive message
+
+FileUpload component now makes real API calls to analyze portfolio CSVs and stores results in Jotai state for use by results page.
+Commit created: fe605ba feat: Connect FileUpload to analyze API
+
+=== Attempting task 44 of 59 ===
+Time: Mon Jan 12 20:19:15 CET 2026
+Remaining tasks: 12
+Next task: Phase 48: Navigate to results on success
+Attempt 1...
