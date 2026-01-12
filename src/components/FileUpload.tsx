@@ -2,10 +2,13 @@
 
 import { Card } from './ui/card';
 import { Button } from './ui/button';
-import { Upload, CheckCircle, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Upload, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { uploadAtom } from '@/store/uploadAtom';
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
@@ -48,7 +51,34 @@ export default function FileUpload() {
     }
   };
 
+  const validateFile = (file: File): string | null => {
+    // Check file extension
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.csv')) {
+      return 'Invalid file type. Please upload a CSV file (.csv)';
+    }
+
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      const sizeMB = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(0);
+      return `File is too large. Maximum file size is ${sizeMB}MB`;
+    }
+
+    return null;
+  };
+
   const handleFile = (file: File) => {
+    // Validate file before processing
+    const validationError = validateFile(file);
+    if (validationError) {
+      setUploadStatus({
+        state: 'error',
+        file: null,
+        error: validationError,
+      });
+      return;
+    }
+
     setUploadStatus({
       state: 'uploading',
       file,
@@ -102,17 +132,13 @@ export default function FileUpload() {
       case 'error':
         return (
           <div className="flex flex-col items-center justify-center gap-4 text-center">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-red-100">
-              <Upload className="w-8 h-8 text-red-500" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-red-900">
-                Upload Failed
-              </h3>
-              <p className="text-sm text-red-600">
+            <Alert variant="destructive" className="mb-2 text-left">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Upload Failed</AlertTitle>
+              <AlertDescription>
                 {uploadStatus.error || 'Something went wrong'}
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
             <Button
               variant="outline"
               type="button"
