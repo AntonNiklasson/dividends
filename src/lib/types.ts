@@ -1,3 +1,18 @@
+// Persisted stock in localStorage
+export interface PersistedStock {
+  ticker: string;
+  name: string;
+  shares: number;
+  currency: string;
+}
+
+// Persisted portfolio structure
+export interface PersistedPortfolio {
+  id: string;
+  name: string;
+  stocks: PersistedStock[];
+}
+
 // Avanza CSV row structure
 export interface AvanzaRow {
   Kontonummer: string;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
 import YearTabs from '@/components/YearTabs';
@@ -9,17 +9,14 @@ import ErrorBanner from '@/components/ErrorBanner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
-import { Upload } from 'lucide-react';
+import { ArrowLeft, Briefcase } from 'lucide-react';
 
 export default function ResultsPage() {
-  const [portfolioData, setPortfolioData] = useAtom(portfolioAtom);
+  const portfolioData = useAtomValue(portfolioAtom);
   const isLoading = useAtomValue(portfolioLoadingAtom);
   const router = useRouter();
 
-  const handleUploadNew = () => {
-    // Clear the portfolio state
-    setPortfolioData(null);
-    // Navigate back to home
+  const handleBackToPortfolio = () => {
     router.push('/');
   };
 
@@ -76,13 +73,13 @@ export default function ResultsPage() {
       <div className="container mx-auto px-4 py-8">
         <Card className="max-w-md mx-auto p-8 text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center bg-muted mx-auto mb-4">
-            <Upload className="w-8 h-8 text-muted-foreground" />
+            <Briefcase className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h2 className="text-lg font-semibold mb-2">No Data Available</h2>
+          <h2 className="text-lg font-semibold mb-2">No Analysis Yet</h2>
           <p className="text-muted-foreground mb-6">
-            Upload a portfolio CSV to see your dividend projections
+            Build your portfolio and click Analyze to see dividend projections
           </p>
-          <Button onClick={() => router.push('/')}>Upload Portfolio</Button>
+          <Button onClick={() => router.push('/')}>Go to Portfolio</Button>
         </Card>
       </div>
     );
@@ -108,12 +105,12 @@ export default function ResultsPage() {
             </p>
           </div>
           <Button
-            onClick={handleUploadNew}
+            onClick={handleBackToPortfolio}
             variant="outline"
             className="w-auto hover:bg-accent transition-colors"
           >
-            <Upload className="w-4 h-4 mr-2 hidden sm:inline" />
-            Upload New
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Portfolio
           </Button>
         </div>
       </header>
