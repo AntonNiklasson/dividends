@@ -63,6 +63,7 @@ export interface TickerError {
 // Single payment in projection
 export interface ProjectedPayment {
   ticker: string;
+  name: string;
   amount: number;
   currency: string;
   date: string; // ISO format: "YYYY-MM-DD"

@@ -15,6 +15,8 @@ interface YahooHistoricalDividendRow {
 
 interface YahooQuote {
   regularMarketPrice?: number;
+  longName?: string;
+  shortName?: string;
 }
 
 const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
@@ -26,6 +28,7 @@ const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 export async function fetchDividends(ticker: string): Promise<{
   dividends: DividendPayment[];
   currentPrice?: number;
+  name?: string;
   error?: string;
 }> {
   try {
@@ -57,11 +60,13 @@ export async function fetchDividends(ticker: string): Promise<{
         amount: item.dividends,
       }));
 
-    // Fetch current stock price using quote endpoint
+    // Fetch current stock price and name using quote endpoint
     let currentPrice: number | undefined;
+    let name: string | undefined;
     try {
       const quote = (await yahooFinance.quote(ticker)) as YahooQuote;
       currentPrice = quote.regularMarketPrice;
+      name = quote.longName || quote.shortName || ticker;
     } catch (priceError) {
       // If we can't get the price, we'll return undefined
       // This is a non-fatal error - we can still return dividend data
@@ -73,11 +78,12 @@ export async function fetchDividends(ticker: string): Promise<{
       return {
         dividends: [],
         currentPrice,
+        name,
         error: 'No dividend history found in the last 12 months',
       };
     }
 
-    return { dividends, currentPrice };
+    return { dividends, currentPrice, name };
   } catch (error) {
     // Handle various error types
     if (error instanceof Error) {
@@ -160,7 +166,7 @@ export async function fetchBatchDividends(stocks: PortfolioStock[]): Promise<{
         // Valid ticker but no dividends - still include with flag
         successfulStocks.push({
           ticker: stock.ticker,
-          name: stock.name,
+          name: result.name || stock.ticker,
           initialShares: stock.shares,
           currency: stock.currency,
           currentPrice: result.currentPrice || 0,
@@ -182,7 +188,7 @@ export async function fetchBatchDividends(stocks: PortfolioStock[]): Promise<{
       // Success case - ticker found with dividends and price
       successfulStocks.push({
         ticker: stock.ticker,
-        name: stock.name,
+        name: result.name || stock.ticker,
         initialShares: stock.shares,
         currency: stock.currency,
         currentPrice: result.currentPrice,

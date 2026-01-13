@@ -17,8 +17,8 @@ export function StockPaymentRow({ payment }: StockPaymentRowProps) {
 
   return (
     <div className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[5rem_auto_1fr_auto] items-center gap-x-3 gap-y-1 py-3 px-3 border-b last:border-0 hover:bg-muted/50 transition-colors rounded-md">
-      {/* Ticker - always visible */}
-      <span className="font-semibold text-sm">{payment.ticker}</span>
+      {/* Name - always visible */}
+      <span className="font-semibold text-sm">{payment.name}</span>
 
       {/* Date - on same row */}
       <span className="text-muted-foreground text-sm">{formattedDate}</span>

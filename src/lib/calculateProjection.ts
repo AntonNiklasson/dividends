@@ -91,6 +91,7 @@ function projectYear(
     // Create payment record
     const payment: ProjectedPayment = {
       ticker: event.stock.ticker,
+      name: event.stock.name,
       amount: dividendAmount,
       currency: event.stock.currency,
       date: `${year}-${String(event.month).padStart(2, '0')}-${String(event.day).padStart(2, '0')}`,

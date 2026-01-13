@@ -25,6 +25,7 @@ describe('calculateProjection', () => {
       expect(result[2026].months[2].payments).toHaveLength(1);
       expect(result[2026].months[2].payments[0]).toEqual({
         ticker: 'TEST',
+        name: 'Test Company',
         amount: 100, // 100 shares * $1.00
         currency: 'USD',
         date: '2026-03-15',
