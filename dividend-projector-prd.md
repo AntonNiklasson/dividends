@@ -31,18 +31,18 @@ A simple upload-and-analyze tool that:
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| Framework | Next.js (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Component Library | shadcn/ui (built on Radix UI primitives) |
-| State Management | Jotai |
-| Testing | Vitest (unit/integration), Playwright (E2E) |
-| Formatting | Prettier |
-| Linting | ESLint |
-| CSV Parsing | papaparse |
-| Dividend Data | Yahoo Finance API (via yahoo-finance2 or similar) |
+| Category          | Technology                                        |
+| ----------------- | ------------------------------------------------- |
+| Framework         | Next.js (App Router)                              |
+| Language          | TypeScript                                        |
+| Styling           | Tailwind CSS                                      |
+| Component Library | shadcn/ui (built on Radix UI primitives)          |
+| State Management  | Jotai                                             |
+| Testing           | Vitest (unit/integration), Playwright (E2E)       |
+| Formatting        | Prettier                                          |
+| Linting           | ESLint                                            |
+| CSV Parsing       | papaparse                                         |
+| Dividend Data     | Yahoo Finance API (via yahoo-finance2 or similar) |
 
 ### Note on shadcn/ui
 
@@ -54,6 +54,7 @@ npx shadcn@latest add button    # Add individual components
 ```
 
 **Components we'll use:**
+
 - `Button` — Primary actions, navigation
 - `Card` — Month cards, summary panels
 - `Tabs` — Year selection (2026/2027/2028)
@@ -115,20 +116,20 @@ npx shadcn@latest add button    # Add individual components
 
 ### Columns
 
-| Column | Description | Example |
-|--------|-------------|---------|
-| `Kontonummer` | Account number | `1234567` |
-| `Namn` | Full name of holding | `Apple` |
-| `Kortnamn` | Ticker/short name | `AAPL` |
-| `Volym` | Number of shares | `14` or `12,1` |
-| `Marknadsvärde` | Market value in SEK | `3506,67` |
-| `GAV (SEK)` | Average acquisition cost in SEK | `247,76` |
-| `GAV` | Average acquisition cost in original currency | `247,76` |
-| `Valuta` | Currency | `SEK`, `USD` |
-| `Land` | Country code | `SE`, `US` |
-| `ISIN` | ISIN code | `SE0000108227` |
-| `Marknad` | Market | `XSTO`, `XNAS`, `XNYS` |
-| `Typ` | Type | `STOCK`, `FUND`, `EXCHANGE_TRADED_FUND` |
+| Column          | Description                                   | Example                                 |
+| --------------- | --------------------------------------------- | --------------------------------------- |
+| `Kontonummer`   | Account number                                | `1234567`                               |
+| `Namn`          | Full name of holding                          | `Apple`                                 |
+| `Kortnamn`      | Ticker/short name                             | `AAPL`                                  |
+| `Volym`         | Number of shares                              | `14` or `12,1`                          |
+| `Marknadsvärde` | Market value in SEK                           | `3506,67`                               |
+| `GAV (SEK)`     | Average acquisition cost in SEK               | `247,76`                                |
+| `GAV`           | Average acquisition cost in original currency | `247,76`                                |
+| `Valuta`        | Currency                                      | `SEK`, `USD`                            |
+| `Land`          | Country code                                  | `SE`, `US`                              |
+| `ISIN`          | ISIN code                                     | `SE0000108227`                          |
+| `Marknad`       | Market                                        | `XSTO`, `XNAS`, `XNYS`                  |
+| `Typ`           | Type                                          | `STOCK`, `FUND`, `EXCHANGE_TRADED_FUND` |
 
 ### Key Fields for Dividend Projection
 
@@ -178,7 +179,7 @@ For each year (2026, 2027, 2028):
     3. After each dividend payment, calculate reinvested shares:
        reinvested_shares = dividend_amount / current_stock_price
     4. Add reinvested shares to total for next dividend calculation
-    
+
   Aggregate by month across all stocks
 ```
 
@@ -201,12 +202,14 @@ For each year (2026, 2027, 2028):
 ### Page: Home / Upload
 
 **Layout:**
+
 - Clean, centered layout
 - App title and brief description
 - Drag-and-drop upload zone (also supports click-to-browse)
 - Accepted format indicator: `.csv` (Avanza export)
 
 **States:**
+
 - Default: empty upload zone
 - Dragging: highlighted border
 - Uploading: progress indicator
@@ -215,11 +218,13 @@ For each year (2026, 2027, 2028):
 ### Page: Results
 
 **Layout:**
+
 - Header with option to upload new file
 - Year tabs: 2026 | 2027 | 2028
 - Monthly breakdown grid/list
 
 **Monthly View:**
+
 - 12 months displayed as cards or rows
 - Each month shows:
   - Month name
@@ -227,6 +232,7 @@ For each year (2026, 2027, 2028):
   - Expandable section with per-stock breakdown
 
 **Per-Stock Detail (expanded):**
+
 - Stock ticker
 - Dividend amount
 - Payment date (approximate)
@@ -249,12 +255,14 @@ For each year (2026, 2027, 2028):
 ### Error States
 
 **File Validation Errors:**
+
 - "Missing required column: Kortnamn"
 - "Missing required column: Volym"
 - "No valid stock data found in file"
 - "Invalid CSV format - expected semicolon delimiter"
 
 **Ticker Lookup Errors:**
+
 - Show warning banner: "Could not find dividend data for: XYZ, ABC"
 - Continue with remaining valid stocks
 - If ALL tickers fail: show error, prompt to check file
@@ -266,9 +274,11 @@ For each year (2026, 2027, 2028):
 ### `POST /api/analyze`
 
 **Request:**
+
 - Multipart form data with CSV file
 
 **Response (Success):**
+
 ```json
 {
   "success": true,
@@ -317,6 +327,7 @@ For each year (2026, 2027, 2028):
 ```
 
 **Response (Error):**
+
 ```json
 {
   "success": false,
