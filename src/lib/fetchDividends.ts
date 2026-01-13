@@ -1,4 +1,4 @@
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
 import type {
   DividendPayment,
   PortfolioStock,
@@ -16,6 +16,8 @@ interface YahooHistoricalDividendRow {
 interface YahooQuote {
   regularMarketPrice?: number;
 }
+
+const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
 /**
  * Fetches dividend history and current stock price for a single ticker from Yahoo Finance
