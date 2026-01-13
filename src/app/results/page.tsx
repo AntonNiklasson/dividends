@@ -9,6 +9,7 @@ import ErrorBanner from '@/components/ErrorBanner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
+import { Upload } from 'lucide-react';
 
 export default function ResultsPage() {
   const [portfolioData, setPortfolioData] = useAtom(portfolioAtom);
@@ -73,7 +74,16 @@ export default function ResultsPage() {
   if (!portfolioData?.success || !portfolioData.projection) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <p className="text-muted-foreground">No projection data available</p>
+        <Card className="max-w-md mx-auto p-8 text-center">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-muted mx-auto mb-4">
+            <Upload className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-lg font-semibold mb-2">No Data Available</h2>
+          <p className="text-muted-foreground mb-6">
+            Upload a portfolio CSV to see your dividend projections
+          </p>
+          <Button onClick={() => router.push('/')}>Upload Portfolio</Button>
+        </Card>
       </div>
     );
   }
@@ -90,17 +100,20 @@ export default function ResultsPage() {
       <header className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Dividend Projection</h1>
-            <p className="mt-2 text-base text-muted-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold">
+              Dividend Projection
+            </h1>
+            <p className="mt-2 text-sm sm:text-base text-muted-foreground">
               Your 3-year dividend income projection with DRIP reinvestment
             </p>
           </div>
           <Button
             onClick={handleUploadNew}
             variant="outline"
-            className="w-full sm:w-auto hover:bg-accent transition-colors"
+            className="w-auto hover:bg-accent transition-colors"
           >
-            Upload New File
+            <Upload className="w-4 h-4 mr-2 hidden sm:inline" />
+            Upload New
           </Button>
         </div>
       </header>
@@ -125,22 +138,39 @@ export default function ResultsPage() {
             return (
               <div className="space-y-4 mt-6">
                 {/* Year Total Display */}
-                <div className="mb-8 p-6 bg-muted/50 rounded-lg border shadow-sm">
-                  <h2 className="text-lg font-semibold mb-3">
-                    Total for {year}
-                  </h2>
-                  <div className="flex flex-wrap gap-4">
-                    {Object.entries(yearData.yearTotal).map(
-                      ([currency, amount]) => (
-                        <div key={currency} className="text-2xl font-bold">
-                          {new Intl.NumberFormat('sv-SE', {
-                            style: 'currency',
-                            currency: currency,
-                            minimumFractionDigits: 2,
-                          }).format(amount)}
-                        </div>
-                      )
-                    )}
+                <div className="mb-8 p-6 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl border-2 border-primary/20 shadow-md">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                        Projected Income {year}
+                      </p>
+                      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 mt-2">
+                        {Object.entries(yearData.yearTotal).map(
+                          ([currency, amount]) => (
+                            <div
+                              key={currency}
+                              className="flex items-baseline gap-2"
+                            >
+                              <span className="text-3xl sm:text-4xl font-bold text-foreground">
+                                {new Intl.NumberFormat('sv-SE', {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }).format(amount)}
+                              </span>
+                              <span className="text-lg font-medium text-muted-foreground">
+                                {currency}
+                              </span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5 bg-success/10 text-success px-2 py-1 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                        With DRIP
+                      </span>
+                    </div>
                   </div>
                 </div>
 

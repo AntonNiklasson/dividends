@@ -5,23 +5,38 @@ interface StockPaymentRowProps {
 }
 
 export function StockPaymentRow({ payment }: StockPaymentRowProps) {
+  const formattedAmount = new Intl.NumberFormat('sv-SE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(payment.amount);
+
+  const formattedDate = new Date(payment.date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-3 px-2 gap-2 sm:gap-0 border-b last:border-0 hover:bg-muted/30 transition-colors rounded-sm">
-      <div className="flex items-center gap-3 sm:gap-4 flex-1">
-        <span className="font-semibold w-20 text-sm">{payment.ticker}</span>
-        <span className="text-muted-foreground text-sm">
-          {new Date(payment.date).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-          })}
-        </span>
-        <span className="text-muted-foreground text-xs ml-auto sm:ml-0">
-          {payment.sharesAtPayment.toFixed(2)} shares
-        </span>
-      </div>
-      <div className="font-semibold self-end sm:self-auto">
-        {payment.amount.toFixed(2)} {payment.currency}
-      </div>
+    <div className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[5rem_auto_1fr_auto] items-center gap-x-3 gap-y-1 py-3 px-3 border-b last:border-0 hover:bg-muted/50 transition-colors rounded-md">
+      {/* Ticker - always visible */}
+      <span className="font-semibold text-sm">{payment.ticker}</span>
+
+      {/* Date - on same row */}
+      <span className="text-muted-foreground text-sm">{formattedDate}</span>
+
+      {/* Shares - hidden on mobile, shown on desktop */}
+      <span className="text-muted-foreground text-xs hidden sm:block">
+        {payment.sharesAtPayment.toFixed(2)} shares
+      </span>
+
+      {/* Amount - always visible, right aligned */}
+      <span className="font-semibold text-right whitespace-nowrap">
+        {formattedAmount} {payment.currency}
+      </span>
+
+      {/* Mobile-only shares count on second row */}
+      <span className="col-span-3 sm:hidden text-xs text-muted-foreground">
+        {payment.sharesAtPayment.toFixed(2)} shares
+      </span>
     </div>
   );
 }
