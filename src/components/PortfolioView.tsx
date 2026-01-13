@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import StockListItem from './StockListItem';
 import StockSearch from './StockSearch';
+import ErrorBanner from './ErrorBanner';
 import {
   persistedPortfolioAtom,
   addStockAtom,
@@ -14,6 +15,7 @@ import {
   updateSharesAtom,
   clearPortfolioAtom,
   importStocksAtom,
+  replaceStocksAtom,
   addExampleStocksAtom,
 } from '@/store/persistedPortfolioAtom';
 import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
@@ -28,12 +30,21 @@ export default function PortfolioView() {
   const updateShares = useSetAtom(updateSharesAtom);
   const clearPortfolio = useSetAtom(clearPortfolioAtom);
   const importStocks = useSetAtom(importStocksAtom);
+  const replaceStocks = useSetAtom(replaceStocksAtom);
   const addExampleStocks = useSetAtom(addExampleStocksAtom);
   const setPortfolioData = useSetAtom(portfolioAtom);
   const setPortfolioLoading = useSetAtom(portfolioLoadingAtom);
+  const portfolioData = useAtomValue(portfolioAtom);
+
+  // Extract errors from last analysis
+  const tickerErrors = portfolioData?.portfolio?.errors || [];
+  const noDividendStocks =
+    portfolioData?.portfolio?.stocks.filter((stock) => !stock.hasDividends) || [];
 
   const [showSearch, setShowSearch] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showImportChoice, setShowImportChoice] = useState(false);
+  const [pendingImport, setPendingImport] = useState<PersistedStock[] | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +82,14 @@ export default function PortfolioView() {
         currency: s.currency,
       }));
 
-      importStocks(stocks);
+      // If portfolio is empty, just import directly
+      if (portfolio.stocks.length === 0) {
+        replaceStocks(stocks);
+      } else {
+        // Ask user what to do
+        setPendingImport(stocks);
+        setShowImportChoice(true);
+      }
     } catch (err) {
       setImportError(err instanceof Error ? err.message : 'Failed to parse CSV');
     }
@@ -80,6 +98,19 @@ export default function PortfolioView() {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleImportChoice = (mode: 'add' | 'replace') => {
+    if (!pendingImport) return;
+
+    if (mode === 'add') {
+      importStocks(pendingImport);
+    } else {
+      replaceStocks(pendingImport);
+    }
+
+    setPendingImport(null);
+    setShowImportChoice(false);
   };
 
   const handleAnalyze = async () => {
@@ -102,7 +133,12 @@ export default function PortfolioView() {
       }
 
       setPortfolioData(data);
-      router.push('/results');
+
+      // If there are ticker errors, stay on portfolio page to show them
+      const hasErrors = (data.portfolio?.errors?.length ?? 0) > 0;
+      if (!hasErrors) {
+        router.push('/results');
+      }
     } catch (error) {
       console.error('Analysis failed:', error);
       setImportError(
@@ -116,6 +152,14 @@ export default function PortfolioView() {
 
   return (
     <>
+      {(tickerErrors.length > 0 || noDividendStocks.length > 0) && (
+        <div className="w-full max-w-2xl">
+          <ErrorBanner
+            tickerErrors={tickerErrors}
+            noDividendStocks={noDividendStocks}
+          />
+        </div>
+      )}
       <Card className="w-full max-w-2xl">
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
@@ -132,6 +176,10 @@ export default function PortfolioView() {
               <p className="text-muted-foreground mb-4">
                 Your portfolio is empty. Add some stocks to get started.
               </p>
+              <Button variant="outline" onClick={() => addExampleStocks()}>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Add example stocks
+              </Button>
             </div>
           ) : (
             <div className="divide-y">
@@ -174,11 +222,6 @@ export default function PortfolioView() {
             >
               <Upload className="w-4 h-4 mr-2" />
               Import CSV
-            </Button>
-
-            <Button variant="outline" onClick={() => addExampleStocks()}>
-              <Sparkles className="w-4 h-4 mr-2" />
-              Add Examples
             </Button>
 
             {portfolio.stocks.length > 0 && (
@@ -249,6 +292,46 @@ export default function PortfolioView() {
                 className="flex-1"
               >
                 Clear All
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {showImportChoice && pendingImport && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => {
+            setShowImportChoice(false);
+            setPendingImport(null);
+          }}
+        >
+          <Card
+            className="w-full max-w-sm mx-4 p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-semibold mb-2">Import {pendingImport.length} stocks</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              You have {portfolio.stocks.length} stocks in your portfolio. How would you like to import?
+            </p>
+            <div className="flex flex-col gap-2">
+              <Button onClick={() => handleImportChoice('add')}>
+                Add to existing
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleImportChoice('replace')}
+              >
+                Replace all
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setShowImportChoice(false);
+                  setPendingImport(null);
+                }}
+              >
+                Cancel
               </Button>
             </div>
           </Card>

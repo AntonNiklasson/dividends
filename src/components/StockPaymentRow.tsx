@@ -5,7 +5,9 @@ interface StockPaymentRowProps {
 }
 
 export function StockPaymentRow({ payment }: StockPaymentRowProps) {
-  const formattedAmount = new Intl.NumberFormat('sv-SE', {
+  const formattedAmount = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(payment.amount);
@@ -30,7 +32,7 @@ export function StockPaymentRow({ payment }: StockPaymentRowProps) {
 
       {/* Amount - always visible, right aligned */}
       <span className="font-semibold text-right whitespace-nowrap">
-        {formattedAmount} {payment.currency}
+        {formattedAmount}
       </span>
 
       {/* Mobile-only shares count on second row */}

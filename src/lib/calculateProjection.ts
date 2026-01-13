@@ -5,9 +5,10 @@ import {
   MonthProjection,
   ProjectedPayment,
 } from './types';
+import { convertToUSD } from './exchangeRates';
 
 /**
- * Calculate dividend projections for 2026-2028 with DRIP reinvestment
+ * Calculate dividend projections for current year + next 2 years with DRIP reinvestment
  */
 export function calculateProjection(
   stocks: StockWithDividends[]
@@ -18,16 +19,16 @@ export function calculateProjection(
     shareTracker.set(stock.ticker, stock.initialShares);
   }
 
-  // Project dividends for 3 years with DRIP
-  const year2026 = projectYear(stocks, 2026, shareTracker);
-  const year2027 = projectYear(stocks, 2027, shareTracker);
-  const year2028 = projectYear(stocks, 2028, shareTracker);
+  // Project dividends for current year + 2 more
+  const currentYear = new Date().getFullYear();
+  const years = [currentYear, currentYear + 1, currentYear + 2];
 
-  return {
-    2026: year2026,
-    2027: year2027,
-    2028: year2028,
-  };
+  const result: ProjectionResponse = {};
+  for (const year of years) {
+    result[year] = projectYear(stocks, year, shareTracker);
+  }
+
+  return result;
 }
 
 /**
@@ -86,14 +87,18 @@ function projectYear(
     const monthIndex = event.month - 1; // Convert to 0-based index
 
     // Calculate total dividend payment for this stock at current share count
-    const dividendAmount = currentShares * event.amount;
+    const dividendAmountOriginal = currentShares * event.amount;
+    const dividendAmountUSD = convertToUSD(
+      dividendAmountOriginal,
+      event.stock.currency
+    );
 
-    // Create payment record
+    // Create payment record (all amounts in USD)
     const payment: ProjectedPayment = {
       ticker: event.stock.ticker,
       name: event.stock.name,
-      amount: dividendAmount,
-      currency: event.stock.currency,
+      amount: dividendAmountUSD,
+      currency: 'USD',
       date: `${year}-${String(event.month).padStart(2, '0')}-${String(event.day).padStart(2, '0')}`,
       sharesAtPayment: currentShares,
     };
@@ -101,20 +106,20 @@ function projectYear(
     // Add to month
     months[monthIndex].payments.push(payment);
 
-    // Update month total
-    if (!months[monthIndex].total[event.stock.currency]) {
-      months[monthIndex].total[event.stock.currency] = 0;
+    // Update month total (single USD total)
+    if (!months[monthIndex].total.USD) {
+      months[monthIndex].total.USD = 0;
     }
-    months[monthIndex].total[event.stock.currency] += dividendAmount;
+    months[monthIndex].total.USD += dividendAmountUSD;
 
     // Update year total
-    if (!yearTotal[event.stock.currency]) {
-      yearTotal[event.stock.currency] = 0;
+    if (!yearTotal.USD) {
+      yearTotal.USD = 0;
     }
-    yearTotal[event.stock.currency] += dividendAmount;
+    yearTotal.USD += dividendAmountUSD;
 
-    // DRIP: Calculate new shares purchased with dividend
-    const newShares = dividendAmount / event.stock.currentPrice;
+    // DRIP: Calculate new shares purchased with dividend (in original currency)
+    const newShares = dividendAmountOriginal / event.stock.currentPrice;
     shareTracker.set(event.stock.ticker, currentShares + newShares);
   }
 

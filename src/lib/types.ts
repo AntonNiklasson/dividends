@@ -98,12 +98,8 @@ export interface YearProjection {
   yearTotal: Record<string, number>; // Currency -> total amount
 }
 
-// Full projection response
-export interface ProjectionResponse {
-  2026: YearProjection;
-  2027: YearProjection;
-  2028: YearProjection;
-}
+// Full projection response (dynamic years)
+export type ProjectionResponse = Record<number, YearProjection>;
 
 // API response structure
 export interface AnalyzeResponse {

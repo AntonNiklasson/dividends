@@ -328,7 +328,7 @@ describe('API /api/analyze integration flow', () => {
       expect(febPayments[0].ticker).toBe('AAPL');
     });
 
-    it('should handle multiple currencies in projections', async () => {
+    it('should convert all currencies to USD in projections', async () => {
       const mockDividendData: StockWithDividends[] = [
         {
           ticker: 'AAPL',
@@ -351,12 +351,13 @@ describe('API /api/analyze integration flow', () => {
       ];
 
       const projection = calculateProjection(mockDividendData);
+      const currentYear = new Date().getFullYear();
 
-      // Should have both currencies in totals
-      expect(projection['2026'].yearTotal.USD).toBeDefined();
-      expect(projection['2026'].yearTotal.CHF).toBeDefined();
-      expect(projection['2026'].yearTotal.USD).toBeGreaterThan(0);
-      expect(projection['2026'].yearTotal.CHF).toBeGreaterThan(0);
+      // All currencies converted to USD
+      expect(projection[currentYear].yearTotal.USD).toBeDefined();
+      expect(projection[currentYear].yearTotal.USD).toBeGreaterThan(0);
+      // CHF should not exist - converted to USD
+      expect(projection[currentYear].yearTotal.CHF).toBeUndefined();
     });
   });
 });

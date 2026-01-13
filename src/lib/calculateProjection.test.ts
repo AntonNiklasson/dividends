@@ -2,6 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { calculateProjection } from './calculateProjection';
 import { StockWithDividends } from './types';
 
+// Dynamic years for tests
+const YEAR_1 = new Date().getFullYear();
+const YEAR_2 = YEAR_1 + 1;
+const YEAR_3 = YEAR_1 + 2;
+
 describe('calculateProjection', () => {
   describe('basic projection', () => {
     it('should project single stock with one dividend per year', () => {
@@ -22,17 +27,17 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // Year 2026 - March payment
-      expect(result[2026].months[2].payments).toHaveLength(1);
-      expect(result[2026].months[2].payments[0]).toEqual({
+      expect(result[YEAR_1].months[2].payments).toHaveLength(1);
+      expect(result[YEAR_1].months[2].payments[0]).toEqual({
         ticker: 'TEST',
         name: 'Test Company',
         amount: 100, // 100 shares * $1.00
         currency: 'USD',
-        date: '2026-03-15',
+        date: `${YEAR_1}-03-15`,
         sharesAtPayment: 100,
       });
-      expect(result[2026].months[2].total).toEqual({ USD: 100 });
-      expect(result[2026].yearTotal).toEqual({ USD: 100 });
+      expect(result[YEAR_1].months[2].total).toEqual({ USD: 100 });
+      expect(result[YEAR_1].yearTotal).toEqual({ USD: 100 });
     });
 
     it('should project stock with quarterly dividends', () => {
@@ -56,14 +61,14 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // Check all four quarters have payments
-      expect(result[2026].months[1].payments).toHaveLength(1); // Feb
-      expect(result[2026].months[4].payments).toHaveLength(1); // May
-      expect(result[2026].months[7].payments).toHaveLength(1); // Aug
-      expect(result[2026].months[10].payments).toHaveLength(1); // Nov
+      expect(result[YEAR_1].months[1].payments).toHaveLength(1); // Feb
+      expect(result[YEAR_1].months[4].payments).toHaveLength(1); // May
+      expect(result[YEAR_1].months[7].payments).toHaveLength(1); // Aug
+      expect(result[YEAR_1].months[10].payments).toHaveLength(1); // Nov
 
       // Each payment should be 50 shares * $0.24 = $12.00
-      expect(result[2026].months[1].payments[0].amount).toBe(12);
-      expect(result[2026].months[1].payments[0].sharesAtPayment).toBe(50);
+      expect(result[YEAR_1].months[1].payments[0].amount).toBe(12);
+      expect(result[YEAR_1].months[1].payments[0].sharesAtPayment).toBe(50);
     });
 
     it('should handle stocks with no dividend history', () => {
@@ -82,9 +87,9 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // No dividends should be projected
-      expect(result[2026].yearTotal).toEqual({});
-      expect(result[2027].yearTotal).toEqual({});
-      expect(result[2028].yearTotal).toEqual({});
+      expect(result[YEAR_1].yearTotal).toEqual({});
+      expect(result[YEAR_2].yearTotal).toEqual({});
+      expect(result[YEAR_3].yearTotal).toEqual({});
     });
   });
 
@@ -107,22 +112,22 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // 2026: 100 shares * $2.00 = $200 dividend
-      expect(result[2026].months[5].payments[0].amount).toBe(200);
-      expect(result[2026].months[5].payments[0].sharesAtPayment).toBe(100);
+      expect(result[YEAR_1].months[5].payments[0].amount).toBe(200);
+      expect(result[YEAR_1].months[5].payments[0].sharesAtPayment).toBe(100);
 
       // Reinvest: $200 / $50 = 4 new shares
       // Total shares after 2026: 104 shares
 
       // 2027: 104 shares * $2.00 = $208 dividend
-      expect(result[2027].months[5].payments[0].amount).toBe(208);
-      expect(result[2027].months[5].payments[0].sharesAtPayment).toBe(104);
+      expect(result[YEAR_2].months[5].payments[0].amount).toBe(208);
+      expect(result[YEAR_2].months[5].payments[0].sharesAtPayment).toBe(104);
 
       // Reinvest: $208 / $50 = 4.16 new shares
       // Total shares after 2027: 108.16 shares
 
       // 2028: 108.16 shares * $2.00 = $216.32 dividend
-      expect(result[2028].months[5].payments[0].amount).toBeCloseTo(216.32, 2);
-      expect(result[2028].months[5].payments[0].sharesAtPayment).toBeCloseTo(
+      expect(result[YEAR_3].months[5].payments[0].amount).toBeCloseTo(216.32, 2);
+      expect(result[YEAR_3].months[5].payments[0].sharesAtPayment).toBeCloseTo(
         108.16,
         2
       );
@@ -147,22 +152,22 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // First dividend in March: 100 shares * $1.00 = $100
-      expect(result[2026].months[2].payments[0].amount).toBe(100);
-      expect(result[2026].months[2].payments[0].sharesAtPayment).toBe(100);
+      expect(result[YEAR_1].months[2].payments[0].amount).toBe(100);
+      expect(result[YEAR_1].months[2].payments[0].sharesAtPayment).toBe(100);
 
       // After March: 100 + ($100 / $100) = 101 shares
 
       // Second dividend in September: 101 shares * $1.00 = $101
-      expect(result[2026].months[8].payments[0].amount).toBe(101);
-      expect(result[2026].months[8].payments[0].sharesAtPayment).toBe(101);
+      expect(result[YEAR_1].months[8].payments[0].amount).toBe(101);
+      expect(result[YEAR_1].months[8].payments[0].sharesAtPayment).toBe(101);
 
       // Year total: $100 + $101 = $201
-      expect(result[2026].yearTotal.USD).toBe(201);
+      expect(result[YEAR_1].yearTotal.USD).toBe(201);
     });
   });
 
-  describe('multiple currencies', () => {
-    it('should aggregate totals by currency', () => {
+  describe('currency conversion to USD', () => {
+    it('should convert all currencies to USD', () => {
       const stocks: StockWithDividends[] = [
         {
           ticker: 'AAPL',
@@ -195,26 +200,20 @@ describe('calculateProjection', () => {
 
       const result = calculateProjection(stocks);
 
-      // March: AAPL ($10) + NESN.SW (40 CHF)
-      expect(result[2026].months[2].total).toEqual({
-        USD: 10,
-        CHF: 40,
-      });
+      // March: AAPL ($10 USD) + NESN.SW (40 CHF * 1.12 = $44.80 USD)
+      // Total: $54.80 USD
+      expect(result[YEAR_1].months[2].total.USD).toBeCloseTo(54.8, 1);
+      expect(result[YEAR_1].months[2].total.CHF).toBeUndefined();
 
-      // May: SAP (15 EUR)
-      expect(result[2026].months[4].total).toEqual({
-        EUR: 15,
-      });
+      // May: SAP (15 EUR * 1.08 = $16.20 USD)
+      expect(result[YEAR_1].months[4].total.USD).toBeCloseTo(16.2, 1);
+      expect(result[YEAR_1].months[4].total.EUR).toBeUndefined();
 
-      // Year total
-      expect(result[2026].yearTotal).toEqual({
-        USD: 10,
-        CHF: 40,
-        EUR: 15,
-      });
+      // All totals should be in USD only
+      expect(Object.keys(result[YEAR_1].yearTotal)).toEqual(['USD']);
     });
 
-    it('should not mix currencies in totals', () => {
+    it('should aggregate all stocks into single USD total', () => {
       const stocks: StockWithDividends[] = [
         {
           ticker: 'TEST1',
@@ -238,14 +237,13 @@ describe('calculateProjection', () => {
 
       const result = calculateProjection(stocks);
 
-      expect(result[2026].months[5].total).toEqual({
-        USD: 100,
-        EUR: 50,
-      });
+      // USD: 100 * 1.0 = $100
+      // EUR: 50 * 1.0 * 1.08 = $54
+      // Total: $154
+      expect(result[YEAR_1].months[5].total.USD).toBeCloseTo(154, 0);
 
-      // Verify they're kept separate
-      expect(result[2026].yearTotal.USD).toBe(100);
-      expect(result[2026].yearTotal.EUR).toBe(50);
+      // Only USD key should exist
+      expect(Object.keys(result[YEAR_1].yearTotal)).toEqual(['USD']);
     });
   });
 
@@ -266,17 +264,17 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // 2026: 1000 shares * $5 = $5000
-      expect(result[2026].yearTotal.USD).toBe(5000);
+      expect(result[YEAR_1].yearTotal.USD).toBe(5000);
 
       // After 2026: 1000 + ($5000 / $100) = 1050 shares
 
       // 2027: 1050 shares * $5 = $5250
-      expect(result[2027].yearTotal.USD).toBe(5250);
+      expect(result[YEAR_2].yearTotal.USD).toBe(5250);
 
       // After 2027: 1050 + ($5250 / $100) = 1102.5 shares
 
       // 2028: 1102.5 shares * $5 = $5512.50
-      expect(result[2028].yearTotal.USD).toBeCloseTo(5512.5, 2);
+      expect(result[YEAR_3].yearTotal.USD).toBeCloseTo(5512.5, 2);
     });
 
     it('should track shares independently per stock', () => {
@@ -304,14 +302,14 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // STOCK1 in 2026: 100 shares * $1.00 = $100
-      const stock1Payment2026 = result[2026].months[5].payments.find(
+      const stock1Payment2026 = result[YEAR_1].months[5].payments.find(
         (p) => p.ticker === 'STOCK1'
       );
       expect(stock1Payment2026?.amount).toBe(100);
       expect(stock1Payment2026?.sharesAtPayment).toBe(100);
 
       // STOCK2 in 2026: 200 shares * $0.50 = $100
-      const stock2Payment2026 = result[2026].months[5].payments.find(
+      const stock2Payment2026 = result[YEAR_1].months[5].payments.find(
         (p) => p.ticker === 'STOCK2'
       );
       expect(stock2Payment2026?.amount).toBe(100);
@@ -319,14 +317,14 @@ describe('calculateProjection', () => {
 
       // In 2027, shares should have increased independently
       // STOCK1: 100 + ($100 / $50) = 102 shares
-      const stock1Payment2027 = result[2027].months[5].payments.find(
+      const stock1Payment2027 = result[YEAR_2].months[5].payments.find(
         (p) => p.ticker === 'STOCK1'
       );
       expect(stock1Payment2027?.sharesAtPayment).toBe(102);
       expect(stock1Payment2027?.amount).toBe(102);
 
       // STOCK2: 200 + ($100 / $25) = 204 shares
-      const stock2Payment2027 = result[2027].months[5].payments.find(
+      const stock2Payment2027 = result[YEAR_2].months[5].payments.find(
         (p) => p.ticker === 'STOCK2'
       );
       expect(stock2Payment2027?.sharesAtPayment).toBe(204);
@@ -339,9 +337,9 @@ describe('calculateProjection', () => {
       const stocks: StockWithDividends[] = [];
       const result = calculateProjection(stocks);
 
-      expect(result[2026].yearTotal).toEqual({});
-      expect(result[2027].yearTotal).toEqual({});
-      expect(result[2028].yearTotal).toEqual({});
+      expect(result[YEAR_1].yearTotal).toEqual({});
+      expect(result[YEAR_2].yearTotal).toEqual({});
+      expect(result[YEAR_3].yearTotal).toEqual({});
     });
 
     it('should handle months with no dividends', () => {
@@ -360,11 +358,11 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // January should have no payments
-      expect(result[2026].months[0].payments).toHaveLength(0);
-      expect(result[2026].months[0].total).toEqual({});
+      expect(result[YEAR_1].months[0].payments).toHaveLength(0);
+      expect(result[YEAR_1].months[0].total).toEqual({});
 
       // June should have payment
-      expect(result[2026].months[5].payments).toHaveLength(1);
+      expect(result[YEAR_1].months[5].payments).toHaveLength(1);
     });
 
     it('should handle fractional shares from DRIP', () => {
@@ -387,11 +385,11 @@ describe('calculateProjection', () => {
       const totalShares2026 = 100 + 100 / 33.33;
 
       // 2027: should use fractional shares
-      expect(result[2027].months[5].payments[0].sharesAtPayment).toBeCloseTo(
+      expect(result[YEAR_2].months[5].payments[0].sharesAtPayment).toBeCloseTo(
         totalShares2026,
         4
       );
-      expect(result[2027].months[5].payments[0].amount).toBeCloseTo(
+      expect(result[YEAR_2].months[5].payments[0].amount).toBeCloseTo(
         totalShares2026 * 1.0,
         2
       );
@@ -422,16 +420,16 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // Both should be in March
-      const marchPayments = result[2026].months[2].payments;
+      const marchPayments = result[YEAR_1].months[2].payments;
       expect(marchPayments).toHaveLength(2);
 
       // EARLY should come first
       expect(marchPayments[0].ticker).toBe('EARLY');
-      expect(marchPayments[0].date).toBe('2026-03-05');
+      expect(marchPayments[0].date).toBe(`${YEAR_1}-03-05`);
 
       // LATE should come second
       expect(marchPayments[1].ticker).toBe('LATE');
-      expect(marchPayments[1].date).toBe('2026-03-25');
+      expect(marchPayments[1].date).toBe(`${YEAR_1}-03-25`);
     });
 
     it('should handle mix of dividend and non-dividend stocks', () => {
@@ -459,9 +457,9 @@ describe('calculateProjection', () => {
       const result = calculateProjection(stocks);
 
       // Only DIVVY should have payments
-      expect(result[2026].months[5].payments).toHaveLength(1);
-      expect(result[2026].months[5].payments[0].ticker).toBe('DIVVY');
-      expect(result[2026].yearTotal.USD).toBe(100);
+      expect(result[YEAR_1].months[5].payments).toHaveLength(1);
+      expect(result[YEAR_1].months[5].payments[0].ticker).toBe('DIVVY');
+      expect(result[YEAR_1].yearTotal.USD).toBe(100);
     });
   });
 });

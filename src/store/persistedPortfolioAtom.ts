@@ -90,7 +90,7 @@ export const addExampleStocksAtom = atom(null, (get, set) => {
   });
 });
 
-// Action: Import stocks from CSV (merge)
+// Action: Import stocks from CSV (merge with existing)
 export const importStocksAtom = atom(null, (get, set, newStocks: PersistedStock[]) => {
   const portfolio = get(persistedPortfolioAtom);
   const existingTickers = new Set(portfolio.stocks.map((s) => s.ticker));
@@ -109,5 +109,14 @@ export const importStocksAtom = atom(null, (get, set, newStocks: PersistedStock[
   set(persistedPortfolioAtom, {
     ...portfolio,
     stocks: merged,
+  });
+});
+
+// Action: Replace all stocks with imported ones
+export const replaceStocksAtom = atom(null, (get, set, newStocks: PersistedStock[]) => {
+  const portfolio = get(persistedPortfolioAtom);
+  set(persistedPortfolioAtom, {
+    ...portfolio,
+    stocks: newStocks,
   });
 });
