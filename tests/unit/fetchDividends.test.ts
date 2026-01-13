@@ -1,19 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fetchDividends, fetchBatchDividends } from '@/lib/fetchDividends';
 import type { PortfolioStock } from '@/lib/types';
-import yahooFinance from 'yahoo-finance2';
 
-// Mock yahoo-finance2
+// Hoist mock functions so they're available before module loading
+const { mockHistoricalFn, mockQuoteFn } = vi.hoisted(() => ({
+  mockHistoricalFn: vi.fn(),
+  mockQuoteFn: vi.fn(),
+}));
+
+// Mock yahoo-finance2 v3 (requires instantiation)
 vi.mock('yahoo-finance2', () => ({
-  default: {
-    historical: vi.fn(),
-    quote: vi.fn(),
+  default: class YahooFinance {
+    historical = mockHistoricalFn;
+    quote = mockQuoteFn;
   },
 }));
 
-// Type aliases for Yahoo Finance mock responses
-type HistoricalResponse = Awaited<ReturnType<typeof yahooFinance.historical>>;
-type QuoteResponse = Awaited<ReturnType<typeof yahooFinance.quote>>;
+// Type aliases for mock responses
+type HistoricalResponse = { date: Date; dividends?: number }[];
+type QuoteResponse = { regularMarketPrice?: number };
 
 describe('fetchDividends', () => {
   beforeEach(() => {
@@ -34,10 +39,10 @@ describe('fetchDividends', () => {
       // Mock current price data
       const mockQuote = { regularMarketPrice: 185.5 };
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(
+      mockHistoricalFn.mockResolvedValue(
         mockDividends as unknown as HistoricalResponse
       );
-      vi.mocked(yahooFinance.quote).mockResolvedValue(
+      mockQuoteFn.mockResolvedValue(
         mockQuote as unknown as QuoteResponse
       );
 
@@ -57,10 +62,10 @@ describe('fetchDividends', () => {
 
       const mockQuote = { regularMarketPrice: 45.2 };
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(
+      mockHistoricalFn.mockResolvedValue(
         mockDividends as unknown as HistoricalResponse
       );
-      vi.mocked(yahooFinance.quote).mockResolvedValue(
+      mockQuoteFn.mockResolvedValue(
         mockQuote as unknown as QuoteResponse
       );
 
@@ -75,10 +80,10 @@ describe('fetchDividends', () => {
   describe('stocks with no dividends', () => {
     it('should return error message when no dividends found in last 12 months', async () => {
       // Mock empty dividend history
-      vi.mocked(yahooFinance.historical).mockResolvedValue(
+      mockHistoricalFn.mockResolvedValue(
         [] as unknown as HistoricalResponse
       );
-      vi.mocked(yahooFinance.quote).mockResolvedValue({
+      mockQuoteFn.mockResolvedValue({
         regularMarketPrice: 250.0,
       } as unknown as QuoteResponse);
 
@@ -99,10 +104,10 @@ describe('fetchDividends', () => {
         { date: new Date('2025-08-15'), dividends: 0.24 },
       ];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(
+      mockHistoricalFn.mockResolvedValue(
         mockData as unknown as HistoricalResponse
       );
-      vi.mocked(yahooFinance.quote).mockResolvedValue({
+      mockQuoteFn.mockResolvedValue({
         regularMarketPrice: 185.5,
       } as unknown as QuoteResponse);
 
@@ -115,7 +120,7 @@ describe('fetchDividends', () => {
 
   describe('ticker not found', () => {
     it('should return error when ticker is not found', async () => {
-      vi.mocked(yahooFinance.historical).mockRejectedValue(
+      mockHistoricalFn.mockRejectedValue(
         new Error('Not Found: No data found for ticker')
       );
 
@@ -127,7 +132,7 @@ describe('fetchDividends', () => {
     });
 
     it('should handle invalid ticker symbol error', async () => {
-      vi.mocked(yahooFinance.historical).mockRejectedValue(
+      mockHistoricalFn.mockRejectedValue(
         new Error('Invalid ticker symbol')
       );
 
@@ -140,7 +145,7 @@ describe('fetchDividends', () => {
 
   describe('network errors', () => {
     it('should handle network errors gracefully', async () => {
-      vi.mocked(yahooFinance.historical).mockRejectedValue(
+      mockHistoricalFn.mockRejectedValue(
         new Error('Network timeout')
       );
 
@@ -151,7 +156,7 @@ describe('fetchDividends', () => {
     });
 
     it('should handle unknown error types', async () => {
-      vi.mocked(yahooFinance.historical).mockRejectedValue('Unknown error');
+      mockHistoricalFn.mockRejectedValue('Unknown error');
 
       const result = await fetchDividends('AAPL');
 
@@ -166,10 +171,10 @@ describe('fetchDividends', () => {
     it('should return dividend data even if price fetch fails', async () => {
       const mockDividends = [{ date: new Date('2025-11-15'), dividends: 0.24 }];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(
+      mockHistoricalFn.mockResolvedValue(
         mockDividends as unknown as HistoricalResponse
       );
-      vi.mocked(yahooFinance.quote).mockRejectedValue(
+      mockQuoteFn.mockRejectedValue(
         new Error('Failed to fetch price')
       );
 
@@ -183,10 +188,10 @@ describe('fetchDividends', () => {
     it('should handle missing regularMarketPrice in quote response', async () => {
       const mockDividends = [{ date: new Date('2025-11-15'), dividends: 0.24 }];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(
+      mockHistoricalFn.mockResolvedValue(
         mockDividends as unknown as HistoricalResponse
       );
-      vi.mocked(yahooFinance.quote).mockResolvedValue(
+      mockQuoteFn.mockResolvedValue(
         {} as unknown as QuoteResponse
       );
 
@@ -226,7 +231,7 @@ describe('fetchBatchDividends', () => {
       ];
 
       // Mock successful responses for both tickers
-      vi.mocked(yahooFinance.historical)
+      mockHistoricalFn
         .mockResolvedValueOnce([
           { date: new Date('2025-11-15'), dividends: 0.24 },
         ] as unknown as HistoricalResponse)
@@ -234,7 +239,7 @@ describe('fetchBatchDividends', () => {
           { date: new Date('2025-11-15'), dividends: 0.75 },
         ] as unknown as HistoricalResponse);
 
-      vi.mocked(yahooFinance.quote)
+      mockQuoteFn
         .mockResolvedValueOnce({
           regularMarketPrice: 185.5,
         } as unknown as QuoteResponse)
@@ -268,12 +273,12 @@ describe('fetchBatchDividends', () => {
         },
       ];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue([
+      mockHistoricalFn.mockResolvedValue([
         { date: new Date('2025-11-15'), dividends: 0.24 },
         { date: new Date('2025-08-01'), dividends: 0.24 },
       ] as unknown as HistoricalResponse);
 
-      vi.mocked(yahooFinance.quote).mockResolvedValue({
+      mockQuoteFn.mockResolvedValue({
         regularMarketPrice: 185.5,
       } as unknown as QuoteResponse);
 
@@ -314,7 +319,7 @@ describe('fetchBatchDividends', () => {
         },
       ];
 
-      vi.mocked(yahooFinance.historical)
+      mockHistoricalFn
         .mockResolvedValueOnce([
           { date: new Date('2025-11-15'), dividends: 0.24 },
         ] as unknown as HistoricalResponse)
@@ -322,7 +327,7 @@ describe('fetchBatchDividends', () => {
           new Error('Not Found: No data found for ticker')
         );
 
-      vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+      mockQuoteFn.mockResolvedValueOnce({
         regularMarketPrice: 185.5,
       } as unknown as QuoteResponse);
 
@@ -350,10 +355,10 @@ describe('fetchBatchDividends', () => {
         },
       ];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue(
+      mockHistoricalFn.mockResolvedValue(
         [] as unknown as HistoricalResponse
       );
-      vi.mocked(yahooFinance.quote).mockResolvedValue({
+      mockQuoteFn.mockResolvedValue({
         regularMarketPrice: 250.0,
       } as unknown as QuoteResponse);
 
@@ -380,10 +385,10 @@ describe('fetchBatchDividends', () => {
         },
       ];
 
-      vi.mocked(yahooFinance.historical).mockResolvedValue([
+      mockHistoricalFn.mockResolvedValue([
         { date: new Date('2025-11-15'), dividends: 0.24 },
       ] as unknown as HistoricalResponse);
-      vi.mocked(yahooFinance.quote).mockResolvedValue(
+      mockQuoteFn.mockResolvedValue(
         {} as unknown as QuoteResponse
       );
 
@@ -428,7 +433,7 @@ describe('fetchBatchDividends', () => {
       ];
 
       // Mock responses for all three tickers
-      vi.mocked(yahooFinance.historical)
+      mockHistoricalFn
         .mockResolvedValueOnce([
           { date: new Date('2025-11-15'), dividends: 0.24 },
         ] as unknown as HistoricalResponse)
@@ -437,7 +442,7 @@ describe('fetchBatchDividends', () => {
         ] as unknown as HistoricalResponse)
         .mockResolvedValueOnce([] as unknown as HistoricalResponse);
 
-      vi.mocked(yahooFinance.quote)
+      mockQuoteFn
         .mockResolvedValueOnce({
           regularMarketPrice: 185.5,
         } as unknown as QuoteResponse)
