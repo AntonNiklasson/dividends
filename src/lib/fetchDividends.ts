@@ -6,6 +6,7 @@ import type {
   TickerError,
   DividendScheduleEntry,
 } from './types';
+import { cache, CACHE_KEYS } from './cache';
 
 // Yahoo Finance types (incomplete, using what we need)
 interface YahooHistoricalDividendRow {
@@ -19,11 +20,25 @@ interface YahooQuote {
   shortName?: string;
 }
 
+// Cached dividend data structure (dates stored as ISO strings for serialization)
+interface CachedDividendData {
+  dividends: Array<{ date: string; amount: number }>;
+  currentPrice?: number;
+  name?: string;
+  error?: string;
+  cachedAt: number;
+}
+
+// Cache TTL: 24 hours for dividend data
+const DIVIDEND_CACHE_TTL = 24 * 60 * 60;
+
 const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
 /**
  * Fetches dividend history and current stock price for a single ticker from Yahoo Finance
  * Returns dividends from the last 12 months and the current price
+ *
+ * Results are cached for 24 hours to reduce API calls
  */
 export async function fetchDividends(ticker: string): Promise<{
   dividends: DividendPayment[];
@@ -31,6 +46,23 @@ export async function fetchDividends(ticker: string): Promise<{
   name?: string;
   error?: string;
 }> {
+  const cacheKey = `${CACHE_KEYS.DIVIDEND_DATA}${ticker.toUpperCase()}`;
+
+  // Check cache first
+  const cached = await cache.get<CachedDividendData>(cacheKey);
+  if (cached) {
+    // Convert cached date strings back to Date objects
+    return {
+      dividends: cached.dividends.map((d) => ({
+        date: new Date(d.date),
+        amount: d.amount,
+      })),
+      currentPrice: cached.currentPrice,
+      name: cached.name,
+      error: cached.error,
+    };
+  }
+
   try {
     // Calculate date range (last 12 months)
     const endDate = new Date();
@@ -73,17 +105,40 @@ export async function fetchDividends(ticker: string): Promise<{
       console.warn(`Failed to fetch current price for ${ticker}:`, priceError);
     }
 
+    // Prepare result
+    let fetchResult: {
+      dividends: DividendPayment[];
+      currentPrice?: number;
+      name?: string;
+      error?: string;
+    };
+
     // If no dividends found in the last 12 months, return empty array
     if (dividends.length === 0) {
-      return {
+      fetchResult = {
         dividends: [],
         currentPrice,
         name,
         error: 'No dividend history found in the last 12 months',
       };
+    } else {
+      fetchResult = { dividends, currentPrice, name };
     }
 
-    return { dividends, currentPrice, name };
+    // Cache the result (convert dates to ISO strings for serialization)
+    const cacheData: CachedDividendData = {
+      dividends: fetchResult.dividends.map((d) => ({
+        date: d.date.toISOString(),
+        amount: d.amount,
+      })),
+      currentPrice: fetchResult.currentPrice,
+      name: fetchResult.name,
+      error: fetchResult.error,
+      cachedAt: Date.now(),
+    };
+    await cache.set(cacheKey, cacheData, DIVIDEND_CACHE_TTL);
+
+    return fetchResult;
   } catch (error) {
     // Handle various error types
     if (error instanceof Error) {
