@@ -3,18 +3,21 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { Trash2, Check, X } from 'lucide-react';
-import type { PersistedStock } from '@/lib/types';
+import type { PersistedStock, FrequencyInfo } from '@/lib/types';
+import { formatFrequency } from '@/lib/dividendFrequency';
 
 interface StockListItemProps {
   stock: PersistedStock;
   onUpdateShares: (shares: number) => void;
   onDelete: () => void;
+  frequencyInfo?: FrequencyInfo;
 }
 
 export default function StockListItem({
   stock,
   onUpdateShares,
   onDelete,
+  frequencyInfo,
 }: StockListItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(stock.shares.toString());
@@ -41,7 +44,14 @@ export default function StockListItem({
     <div className="flex items-center justify-between py-3 px-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors">
       <div className="flex-1 min-w-0">
         <p className="font-medium truncate">{stock.name}</p>
-        <p className="text-sm text-muted-foreground">{stock.ticker}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-muted-foreground">{stock.ticker}</p>
+          {frequencyInfo && frequencyInfo.months.length > 0 && (
+            <span className="text-xs text-muted-foreground">
+              {formatFrequency(frequencyInfo)}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

@@ -120,3 +120,17 @@ export const replaceStocksAtom = atom(null, (get, set, newStocks: PersistedStock
     stocks: newStocks,
   });
 });
+
+// Action: Update frequency info for a stock
+export const updateFrequencyAtom = atom(
+  null,
+  (get, set, { ticker, frequencyInfo }: { ticker: string; frequencyInfo: PersistedStock['frequencyInfo'] }) => {
+    const portfolio = get(persistedPortfolioAtom);
+    set(persistedPortfolioAtom, {
+      ...portfolio,
+      stocks: portfolio.stocks.map((s) =>
+        s.ticker === ticker ? { ...s, frequencyInfo } : s
+      ),
+    });
+  }
+);

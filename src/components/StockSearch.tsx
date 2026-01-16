@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Search, Plus, X, Loader2 } from 'lucide-react';
+import type { FrequencyInfo } from '@/lib/types';
+import { formatFrequency } from '@/lib/dividendFrequency';
 
 interface SearchResult {
   symbol: string;
@@ -12,7 +14,12 @@ interface SearchResult {
 }
 
 interface StockSearchProps {
-  onAdd: (stock: { ticker: string; name: string; shares: number }) => void;
+  onAdd: (stock: {
+    ticker: string;
+    name: string;
+    shares: number;
+    frequencyInfo?: FrequencyInfo;
+  }) => void;
   onClose: () => void;
 }
 
@@ -22,6 +29,8 @@ export default function StockSearch({ onAdd, onClose }: StockSearchProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState<SearchResult | null>(null);
   const [shares, setShares] = useState('10');
+  const [frequencyInfo, setFrequencyInfo] = useState<FrequencyInfo | null>(null);
+  const [isLoadingFrequency, setIsLoadingFrequency] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -59,10 +68,26 @@ export default function StockSearch({ onAdd, onClose }: StockSearchProps) {
     };
   }, [query]);
 
-  const handleSelect = (result: SearchResult) => {
+  const handleSelect = async (result: SearchResult) => {
     setSelected(result);
     setQuery('');
     setResults([]);
+    setFrequencyInfo(null);
+    setIsLoadingFrequency(true);
+
+    try {
+      const res = await fetch(
+        `/api/dividend-info?ticker=${encodeURIComponent(result.symbol)}`
+      );
+      const data = await res.json();
+      if (data.frequencyInfo) {
+        setFrequencyInfo(data.frequencyInfo);
+      }
+    } catch {
+      // Ignore errors - frequency is optional
+    } finally {
+      setIsLoadingFrequency(false);
+    }
   };
 
   const handleAdd = () => {
@@ -74,6 +99,7 @@ export default function StockSearch({ onAdd, onClose }: StockSearchProps) {
       ticker: selected.symbol,
       name: selected.name,
       shares: numShares,
+      frequencyInfo: frequencyInfo ?? undefined,
     });
   };
 
@@ -108,7 +134,20 @@ export default function StockSearch({ onAdd, onClose }: StockSearchProps) {
 
             <div className="bg-muted rounded-lg p-3">
               <p className="font-medium">{selected.name}</p>
-              <p className="text-sm text-muted-foreground">{selected.symbol}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-muted-foreground">{selected.symbol}</p>
+                {isLoadingFrequency && (
+                  <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+                )}
+                {!isLoadingFrequency && frequencyInfo && frequencyInfo.months.length > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {formatFrequency(frequencyInfo)}
+                  </span>
+                )}
+                {!isLoadingFrequency && (!frequencyInfo || frequencyInfo.months.length === 0) && (
+                  <span className="text-xs text-muted-foreground/60">No dividends</span>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
