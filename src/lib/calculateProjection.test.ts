@@ -115,22 +115,20 @@ describe('calculateProjection', () => {
       expect(result[YEAR_1].months[5].payments[0].amount).toBe(200);
       expect(result[YEAR_1].months[5].payments[0].sharesAtPayment).toBe(100);
 
-      // Reinvest: $200 / $50 = 4 new shares
+      // Reinvest: $200 / $50 = 4 whole shares, $0 remainder
       // Total shares after 2026: 104 shares
 
       // 2027: 104 shares * $2.00 = $208 dividend
       expect(result[YEAR_2].months[5].payments[0].amount).toBe(208);
       expect(result[YEAR_2].months[5].payments[0].sharesAtPayment).toBe(104);
 
-      // Reinvest: $208 / $50 = 4.16 new shares
-      // Total shares after 2027: 108.16 shares
+      // Reinvest: $208 / $50 = 4 whole shares, $8 remainder
+      // Total shares after 2027: 108 shares
 
-      // 2028: 108.16 shares * $2.00 = $216.32 dividend
-      expect(result[YEAR_3].months[5].payments[0].amount).toBeCloseTo(216.32, 2);
-      expect(result[YEAR_3].months[5].payments[0].sharesAtPayment).toBeCloseTo(
-        108.16,
-        2
-      );
+      // 2028: 108 shares * $2.00 = $216 dividend
+      // Total cash: $8 + $216 = $224, buy 4 shares, remainder $24
+      expect(result[YEAR_3].months[5].payments[0].amount).toBe(216);
+      expect(result[YEAR_3].months[5].payments[0].sharesAtPayment).toBe(108);
     });
 
     it('should compound multiple dividends within same year', () => {
@@ -266,15 +264,16 @@ describe('calculateProjection', () => {
       // 2026: 1000 shares * $5 = $5000
       expect(result[YEAR_1].yearTotal.USD).toBe(5000);
 
-      // After 2026: 1000 + ($5000 / $100) = 1050 shares
+      // After 2026: 1000 + floor($5000 / $100) = 1050 shares, $0 remainder
 
       // 2027: 1050 shares * $5 = $5250
       expect(result[YEAR_2].yearTotal.USD).toBe(5250);
 
-      // After 2027: 1050 + ($5250 / $100) = 1102.5 shares
+      // After 2027: 1050 + floor($5250 / $100) = 1102 shares, $50 remainder
 
-      // 2028: 1102.5 shares * $5 = $5512.50
-      expect(result[YEAR_3].yearTotal.USD).toBeCloseTo(5512.5, 2);
+      // 2028: 1102 shares * $5 = $5510
+      // (with $50 remainder, total cash = $5560, but dividend is based on shares)
+      expect(result[YEAR_3].yearTotal.USD).toBe(5510);
     });
 
     it('should track shares independently per stock', () => {
@@ -365,7 +364,7 @@ describe('calculateProjection', () => {
       expect(result[YEAR_1].months[5].payments).toHaveLength(1);
     });
 
-    it('should handle fractional shares from DRIP', () => {
+    it('should only purchase whole shares and track remainder', () => {
       const stocks: StockWithDividends[] = [
         {
           ticker: 'TEST',
@@ -380,19 +379,56 @@ describe('calculateProjection', () => {
 
       const result = calculateProjection(stocks);
 
-      // 2026: 100 shares * $1.00 = $100 dividend
-      // Reinvest: $100 / $33.33 = 3.00030003... shares
-      const totalShares2026 = 100 + 100 / 33.33;
+      // Year 1: 100 shares * $1.00 = $100 dividend
+      // Whole shares: floor($100 / $33.33) = 3 shares
+      // Remainder: $100 - (3 * $33.33) = $0.01
+      expect(result[YEAR_1].months[5].payments[0].sharesAtPayment).toBe(100);
+      expect(result[YEAR_1].months[5].payments[0].amount).toBe(100);
 
-      // 2027: should use fractional shares
-      expect(result[YEAR_2].months[5].payments[0].sharesAtPayment).toBeCloseTo(
-        totalShares2026,
-        4
-      );
-      expect(result[YEAR_2].months[5].payments[0].amount).toBeCloseTo(
-        totalShares2026 * 1.0,
-        2
-      );
+      // Year 2: 103 shares * $1.00 = $103 dividend
+      // Total cash: $0.01 + $103 = $103.01
+      // Whole shares: floor($103.01 / $33.33) = 3 shares
+      // New total: 106 shares
+      expect(result[YEAR_2].months[5].payments[0].sharesAtPayment).toBe(103);
+      expect(result[YEAR_2].months[5].payments[0].amount).toBe(103);
+
+      // Year 3: 106 shares (no fractional shares)
+      expect(result[YEAR_3].months[5].payments[0].sharesAtPayment).toBe(106);
+    });
+
+    it('should accumulate remainder cash until it can buy a share', () => {
+      const stocks: StockWithDividends[] = [
+        {
+          ticker: 'TEST',
+          name: 'Test Company',
+          initialShares: 10,
+          currency: 'USD',
+          currentPrice: 100,
+          hasDividends: true,
+          dividendSchedule: [
+            { month: 3, day: 15, amount: 3.0 }, // $30 dividend
+            { month: 9, day: 15, amount: 3.0 }, // $30 dividend
+          ],
+        },
+      ];
+
+      const result = calculateProjection(stocks);
+
+      // March: 10 shares * $3 = $30, can't buy any shares at $100
+      expect(result[YEAR_1].months[2].payments[0].sharesAtPayment).toBe(10);
+
+      // September: 10 shares * $3 = $30, total cash = $60, still can't buy
+      expect(result[YEAR_1].months[8].payments[0].sharesAtPayment).toBe(10);
+
+      // Year 2 March: cash = $60 + $30 = $90, still can't buy
+      expect(result[YEAR_2].months[2].payments[0].sharesAtPayment).toBe(10);
+
+      // Year 2 September: cash = $90 + $30 = $120, buy 1 share!
+      // Remainder: $120 - $100 = $20
+      expect(result[YEAR_2].months[8].payments[0].sharesAtPayment).toBe(10);
+
+      // Year 3 March: 11 shares * $3 = $33, total cash = $20 + $33 = $53
+      expect(result[YEAR_3].months[2].payments[0].sharesAtPayment).toBe(11);
     });
 
     it('should sort dividends by date within same month', () => {
