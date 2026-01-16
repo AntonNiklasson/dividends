@@ -8,7 +8,7 @@ Pick an open GitHub issue, understand it, plan a solution, implement it, and cre
 
 ## Step 1: Pick an Issue
 
-Run `gh issue list --state open` and pick one. Prefer bugs over features, well-defined over vague. Tell the user which issue you picked.
+Run `gh issue list --state open --search "-linked:pr"` to list open issues without existing PRs. Pick one. Prefer bugs over features, well-defined over vague. Tell the user which issue you picked.
 
 ## Step 2: Understand the Issue
 
