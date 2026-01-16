@@ -7,6 +7,7 @@ import type {
   DividendScheduleEntry,
 } from './types';
 import { cache, CACHE_KEYS } from './cache';
+import { detectFrequency } from './dividendFrequency';
 
 // Yahoo Finance types (incomplete, using what we need)
 interface YahooHistoricalDividendRow {
@@ -227,6 +228,7 @@ export async function fetchBatchDividends(stocks: PortfolioStock[]): Promise<{
           currentPrice: result.currentPrice || 0,
           dividendSchedule: [],
           hasDividends: false,
+          frequencyInfo: { frequency: 'irregular', months: [] },
         });
         return;
       }
@@ -249,6 +251,7 @@ export async function fetchBatchDividends(stocks: PortfolioStock[]): Promise<{
         currentPrice: result.currentPrice,
         dividendSchedule: convertToSchedule(result.dividends),
         hasDividends: true,
+        frequencyInfo: detectFrequency(result.dividends),
       });
     })
   );

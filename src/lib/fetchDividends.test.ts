@@ -16,6 +16,20 @@ vi.mock('yahoo-finance2', () => ({
   },
 }));
 
+// Mock cache to prevent cross-test pollution
+vi.mock('@/lib/cache', () => ({
+  cache: {
+    get: vi.fn().mockResolvedValue(null),
+    set: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+    clearPrefix: vi.fn().mockResolvedValue(undefined),
+  },
+  CACHE_KEYS: {
+    DIVIDEND_DATA: 'dividends:',
+    STOCK_SEARCH: 'search:',
+  },
+}));
+
 // Type aliases for mock responses
 type HistoricalResponse = { date: Date; dividends?: number }[];
 type QuoteResponse = { regularMarketPrice?: number };

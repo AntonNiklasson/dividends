@@ -1,9 +1,23 @@
+// Dividend frequency info
+export type DividendFrequency =
+  | 'monthly'
+  | 'quarterly'
+  | 'semi-annual'
+  | 'annual'
+  | 'irregular';
+
+export interface FrequencyInfo {
+  frequency: DividendFrequency;
+  months: number[]; // e.g., [2, 5, 8, 11] for Feb/May/Aug/Nov
+}
+
 // Persisted stock in localStorage
 export interface PersistedStock {
   ticker: string;
   name: string;
   shares: number;
   currency: string;
+  frequencyInfo?: FrequencyInfo;
 }
 
 // Persisted portfolio structure
@@ -67,6 +81,7 @@ export interface StockWithDividends {
   currentPrice: number;
   dividendSchedule: DividendScheduleEntry[];
   hasDividends: boolean; // False if no dividend history found
+  frequencyInfo?: FrequencyInfo;
 }
 
 // Error for a specific ticker

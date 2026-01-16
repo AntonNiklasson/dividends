@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -17,9 +17,10 @@ import {
   importStocksAtom,
   replaceStocksAtom,
   addExampleStocksAtom,
+  updateFrequencyAtom,
 } from '@/store/persistedPortfolioAtom';
 import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
-import type { AnalyzeResponse, PersistedStock } from '@/lib/types';
+import type { AnalyzeResponse, FrequencyInfo, PersistedStock } from '@/lib/types';
 import { Plus, Trash2, Upload, TrendingUp, Loader2, Sparkles } from 'lucide-react';
 import { parseCsv } from '@/lib/parseCsv';
 
@@ -32,6 +33,7 @@ export default function PortfolioView() {
   const importStocks = useSetAtom(importStocksAtom);
   const replaceStocks = useSetAtom(replaceStocksAtom);
   const addExampleStocks = useSetAtom(addExampleStocksAtom);
+  const updateFrequency = useSetAtom(updateFrequencyAtom);
   const setPortfolioData = useSetAtom(portfolioAtom);
   const setPortfolioLoading = useSetAtom(portfolioLoadingAtom);
   const portfolioData = useAtomValue(portfolioAtom);
@@ -40,6 +42,34 @@ export default function PortfolioView() {
   const tickerErrors = portfolioData?.portfolio?.errors || [];
   const noDividendStocks =
     portfolioData?.portfolio?.stocks.filter((stock) => !stock.hasDividends) || [];
+
+  // Create frequency lookup from analysis results
+  const frequencyMap = new Map<string, FrequencyInfo>();
+  portfolioData?.portfolio?.stocks.forEach((stock) => {
+    if (stock.frequencyInfo) {
+      frequencyMap.set(stock.ticker, stock.frequencyInfo);
+    }
+  });
+
+  // Auto-fetch frequency for stocks that don't have it
+  useEffect(() => {
+    const stocksMissingFrequency = portfolio.stocks.filter((s) => !s.frequencyInfo);
+    if (stocksMissingFrequency.length === 0) return;
+
+    stocksMissingFrequency.forEach(async (stock) => {
+      try {
+        const res = await fetch(
+          `/api/dividend-info?ticker=${encodeURIComponent(stock.ticker)}`
+        );
+        const data = await res.json();
+        if (data.frequencyInfo) {
+          updateFrequency({ ticker: stock.ticker, frequencyInfo: data.frequencyInfo });
+        }
+      } catch {
+        // Ignore errors - frequency is optional
+      }
+    });
+  }, [portfolio.stocks, updateFrequency]);
 
   const [showSearch, setShowSearch] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -50,12 +80,18 @@ export default function PortfolioView() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const handleAddStock = (stock: { ticker: string; name: string; shares: number }) => {
+  const handleAddStock = (stock: {
+    ticker: string;
+    name: string;
+    shares: number;
+    frequencyInfo?: FrequencyInfo;
+  }) => {
     addStock({
       ticker: stock.ticker,
       name: stock.name,
       shares: stock.shares,
       currency: 'USD',
+      frequencyInfo: stock.frequencyInfo,
     });
     setShowSearch(false);
   };
@@ -191,6 +227,7 @@ export default function PortfolioView() {
                     updateShares({ ticker: stock.ticker, shares })
                   }
                   onDelete={() => removeStock(stock.ticker)}
+                  frequencyInfo={frequencyMap.get(stock.ticker) || stock.frequencyInfo}
                 />
               ))}
             </div>
