@@ -23,7 +23,7 @@ const MONTH_NAMES = [
 interface SuggestionCardProps {
   stock: SuggestedStockWithCoverage;
   lowMonths: number[];
-  onAdd: (ticker: string, name: string) => void;
+  onAdd: (ticker: string) => void;
 }
 
 export default function SuggestionCard({
@@ -76,7 +76,7 @@ export default function SuggestionCard({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onAdd(stock.ticker, stock.name)}
+          onClick={() => onAdd(stock.ticker)}
           className="shrink-0"
         >
           <Plus className="w-4 h-4 mr-1" />
