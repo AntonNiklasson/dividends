@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
 import YearSection from '@/components/YearSection';
+import DividendSuggestionsSection from '@/components/DividendSuggestionsSection';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
@@ -64,7 +65,8 @@ export default function ResultsPage() {
     );
   }
 
-  const { projection } = portfolioData;
+  const { projection, portfolio } = portfolioData;
+  const existingTickers = portfolio?.stocks.map((s) => s.ticker) ?? [];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -97,6 +99,12 @@ export default function ResultsPage() {
           .map((year) => (
             <YearSection key={year} year={year} data={projection[year]} />
           ))}
+
+        {/* Suggestions section */}
+        <DividendSuggestionsSection
+          projection={projection}
+          existingTickers={existingTickers}
+        />
       </main>
     </div>
   );
