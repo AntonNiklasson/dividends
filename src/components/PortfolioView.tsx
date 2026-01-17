@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useAtom, useSetAtom, useAtomValue } from 'jotai';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { StockListItem } from './StockListItem';
@@ -71,7 +71,6 @@ export function PortfolioView() {
     });
   }, [portfolio.stocks, updateFrequency]);
 
-  const [showSearch, setShowSearch] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [showImportChoice, setShowImportChoice] = useState(false);
   const [pendingImport, setPendingImport] = useState<PersistedStock[] | null>(null);
@@ -79,6 +78,22 @@ export function PortfolioView() {
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Handle search query parameter (used by suggestion cards)
+  const searchQueryParam = searchParams.get('search') || '';
+  const [showSearch, setShowSearch] = useState(false);
+  const [initialSearchQuery, setInitialSearchQuery] = useState('');
+
+  // Auto-open search dialog when navigating with ?search= parameter
+  useEffect(() => {
+    if (searchQueryParam) {
+      setInitialSearchQuery(searchQueryParam);
+      setShowSearch(true);
+      // Clear the search param from URL without triggering React re-render
+      window.history.replaceState(null, '', '/');
+    }
+  }, [searchQueryParam]);
 
   const handleAddStock = (stock: {
     ticker: string;
@@ -295,7 +310,15 @@ export function PortfolioView() {
       </Card>
 
       {showSearch && (
-        <StockSearch onAdd={handleAddStock} onClose={() => setShowSearch(false)} />
+        <StockSearch
+          key={initialSearchQuery || 'search'}
+          onAdd={handleAddStock}
+          onClose={() => {
+            setShowSearch(false);
+            setInitialSearchQuery('');
+          }}
+          initialQuery={initialSearchQuery}
+        />
       )}
 
       {showClearConfirm && (

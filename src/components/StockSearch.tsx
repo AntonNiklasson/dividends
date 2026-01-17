@@ -21,10 +21,11 @@ interface StockSearchProps {
     frequencyInfo?: FrequencyInfo;
   }) => void;
   onClose: () => void;
+  initialQuery?: string;
 }
 
-export function StockSearch({ onAdd, onClose }: StockSearchProps) {
-  const [query, setQuery] = useState('');
+export function StockSearch({ onAdd, onClose, initialQuery = '' }: StockSearchProps) {
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState<SearchResult | null>(null);
