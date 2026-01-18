@@ -79,12 +79,12 @@ export const clearPortfolioAtom = atom(null, (get, set) => {
   });
 });
 
-// Action: Add example stocks (10-50 random stocks from the pool)
+// Action: Add example stocks (4-7 random stocks from the pool)
 export const addExampleStocksAtom = atom(null, (get, set) => {
   const portfolio = get(persistedPortfolioAtom);
   const existingTickers = portfolio.stocks.map((s) => s.ticker);
 
-  const newStocks = getRandomExampleStocks(10, 50, existingTickers);
+  const newStocks = getRandomExampleStocks(4, 7, existingTickers);
   set(persistedPortfolioAtom, {
     ...portfolio,
     stocks: [...portfolio.stocks, ...newStocks],

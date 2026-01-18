@@ -119,7 +119,7 @@ function shuffleArray<T>(array: T[]): T[] {
  * @param min Minimum number of stocks to return
  * @param max Maximum number of stocks to return
  * @param exclude Tickers to exclude (e.g., already in portfolio)
- * @returns Array of PersistedStock with random shares (10)
+ * @returns Array of PersistedStock with random shares (10-50)
  */
 export function getRandomExampleStocks(
   min: number,
@@ -149,7 +149,7 @@ export function getRandomExampleStocks(
   return selected.map((stock) => ({
     ticker: stock.ticker,
     name: stock.name,
-    shares: 10,
+    shares: Math.floor(Math.random() * 41) + 10, // Random 10-50
     currency: stock.currency,
   }));
 }

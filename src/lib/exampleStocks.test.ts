@@ -37,14 +37,15 @@ describe('exampleStocks', () => {
       expect(result.length).toBeLessThanOrEqual(20);
     });
 
-    it('should return PersistedStock format with shares set to 10', () => {
+    it('should return PersistedStock format with shares between 10-50', () => {
       const result = getRandomExampleStocks(5, 5);
       for (const stock of result) {
         expect(stock).toHaveProperty('ticker');
         expect(stock).toHaveProperty('name');
         expect(stock).toHaveProperty('currency');
         expect(stock).toHaveProperty('shares');
-        expect(stock.shares).toBe(10);
+        expect(stock.shares).toBeGreaterThanOrEqual(10);
+        expect(stock.shares).toBeLessThanOrEqual(50);
       }
     });
 
