@@ -36,10 +36,10 @@ describe('suggestStocks', () => {
 
     const result = suggestStocks(lowMonths, existingTickers);
 
-    // Monthly payers (O, STAG, MAIN, SPHD, JEPI, JEPQ) should be first
+    // Monthly payers (O, STAG, MAIN) should be first
     // because they cover all 12 months
-    const topTickers = result.slice(0, 6).map((s) => s.ticker);
-    const monthlyPayers = ['O', 'STAG', 'MAIN', 'SPHD', 'JEPI', 'JEPQ'];
+    const topTickers = result.slice(0, 3).map((s) => s.ticker);
+    const monthlyPayers = ['O', 'STAG', 'MAIN'];
 
     // At least some monthly payers should be in top results
     const hasMonthlyPayer = topTickers.some((t) => monthlyPayers.includes(t));
@@ -89,9 +89,6 @@ describe('suggestStocks', () => {
       'ARE',
       'ITW',
       'CMCSA',
-      'SPHD',
-      'JEPI',
-      'JEPQ',
       'MDT',
       'WMT',
     ];

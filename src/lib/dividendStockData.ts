@@ -7,7 +7,7 @@ export interface SuggestedStock {
 
 /**
  * Curated list of dividend-paying stocks with their typical payment months.
- * Includes dividend aristocrats, REITs, utilities, consumer staples, financials, healthcare, tech, and ETFs.
+ * Includes dividend aristocrats, REITs, utilities, consumer staples, financials, healthcare, and tech.
  * Payment months are based on historical patterns and may vary slightly.
  */
 export const DIVIDEND_STOCKS: SuggestedStock[] = [
@@ -121,19 +121,6 @@ export const DIVIDEND_STOCKS: SuggestedStock[] = [
   { ticker: 'VZ', name: 'Verizon', typicalMonths: [2, 5, 8, 11], sector: 'Communication Services' },
   { ticker: 'T', name: 'AT&T', typicalMonths: [2, 5, 8, 11], sector: 'Communication Services' },
   { ticker: 'CMCSA', name: 'Comcast', typicalMonths: [1, 4, 7, 10], sector: 'Communication Services' },
-
-  // === ETFs (Dividend Focused) ===
-  { ticker: 'VYM', name: 'Vanguard High Dividend Yield ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'SCHD', name: 'Schwab US Dividend Equity ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'DVY', name: 'iShares Select Dividend ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'HDV', name: 'iShares Core High Dividend ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'VIG', name: 'Vanguard Dividend Appreciation ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'NOBL', name: 'ProShares S&P 500 Dividend Aristocrats ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'SDY', name: 'SPDR S&P Dividend ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'DGRO', name: 'iShares Core Dividend Growth ETF', typicalMonths: [3, 6, 9, 12], sector: 'ETF' },
-  { ticker: 'SPHD', name: 'Invesco S&P 500 High Dividend Low Volatility ETF', typicalMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], sector: 'ETF' },
-  { ticker: 'JEPI', name: 'JPMorgan Equity Premium Income ETF', typicalMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], sector: 'ETF' },
-  { ticker: 'JEPQ', name: 'JPMorgan Nasdaq Equity Premium Income ETF', typicalMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], sector: 'ETF' },
 ];
 
 /**
