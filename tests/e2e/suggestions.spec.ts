@@ -23,7 +23,7 @@ test.describe('Stock Suggestions', () => {
 
     // Wait for suggestions section to load
     await expect(
-      page.getByRole('heading', { name: /Suggestions for Low-Income Months/i })
+      page.getByRole('heading', { name: /Suggestions to Balance Your Dividends/i })
     ).toBeVisible({ timeout: 10000 });
 
     // Verify we have some suggestion cards
@@ -37,11 +37,12 @@ test.describe('Stock Suggestions', () => {
 
     // Wait for suggestions section
     await expect(
-      page.getByRole('heading', { name: /Suggestions for Low-Income Months/i })
+      page.getByRole('heading', { name: /Suggestions to Balance Your Dividends/i })
     ).toBeVisible({ timeout: 10000 });
 
-    // Should show which months are low income
-    await expect(page.getByText(/Low income months:/i)).toBeVisible();
+    // Should show the monthly average and which months fall below
+    await expect(page.getByText(/Your monthly average is/i)).toBeVisible();
+    await expect(page.getByText(/month.*fall below this/i)).toBeVisible();
   });
 
   test('should navigate to home and open search when clicking Add', async ({
@@ -51,12 +52,12 @@ test.describe('Stock Suggestions', () => {
 
     // Wait for suggestions section
     await expect(
-      page.getByRole('heading', { name: /Suggestions for Low-Income Months/i })
+      page.getByRole('heading', { name: /Suggestions to Balance Your Dividends/i })
     ).toBeVisible({ timeout: 10000 });
 
-    // Get the first suggestion card's ticker
+    // Get the first suggestion card's ticker (now in muted text below the name)
     const firstCard = page.locator('[class*="Card"]').filter({ hasText: /Add/ }).first();
-    const tickerText = await firstCard.locator('.font-bold').first().textContent();
+    const tickerText = await firstCard.locator('.text-muted-foreground').first().textContent();
     expect(tickerText).toBeTruthy();
 
     // Click Add button on the first suggestion
@@ -66,12 +67,12 @@ test.describe('Stock Suggestions', () => {
     await expect(page).toHaveURL('/', { timeout: 5000 });
 
     // Search dialog should be open with the ticker pre-filled
-    await expect(page.getByPlaceholderText(/Search stocks/i)).toBeVisible({
+    await expect(page.getByPlaceholder(/Search stocks/i)).toBeVisible({
       timeout: 5000,
     });
 
     // The search input should have the ticker as value
-    const searchInput = page.getByPlaceholderText(/Search stocks/i);
+    const searchInput = page.getByPlaceholder(/Search stocks/i);
     await expect(searchInput).toHaveValue(tickerText || '', { timeout: 5000 });
   });
 
@@ -80,18 +81,18 @@ test.describe('Stock Suggestions', () => {
 
     // Wait for suggestions section
     await expect(
-      page.getByRole('heading', { name: /Suggestions for Low-Income Months/i })
+      page.getByRole('heading', { name: /Suggestions to Balance Your Dividends/i })
     ).toBeVisible({ timeout: 10000 });
 
-    // Get the first suggestion card's ticker
+    // Get the first suggestion card's ticker (now in muted text below the name)
     const firstCard = page.locator('[class*="Card"]').filter({ hasText: /Add/ }).first();
-    const tickerText = await firstCard.locator('.font-bold').first().textContent();
+    const tickerText = await firstCard.locator('.text-muted-foreground').first().textContent();
 
     // Click Add button
     await firstCard.getByRole('button', { name: /Add/i }).click();
 
     // Wait for search dialog
-    await expect(page.getByPlaceholderText(/Search stocks/i)).toBeVisible({
+    await expect(page.getByPlaceholder(/Search stocks/i)).toBeVisible({
       timeout: 5000,
     });
 
