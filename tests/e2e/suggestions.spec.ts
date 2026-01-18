@@ -1,23 +1,29 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Stock Suggestions', () => {
-  // Clear localStorage before each test to ensure clean state
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
-  });
-
   // Helper to add stocks and analyze
   async function setupPortfolioAndAnalyze(page: import('@playwright/test').Page) {
+    // Set up a portfolio with example stocks in localStorage before navigating
+    // This avoids issues with atomWithStorage default values
     await page.goto('/');
+    await page.evaluate(() => {
+      const portfolio = {
+        id: 'default',
+        name: 'My Portfolio',
+        stocks: [
+          { ticker: 'AAPL', name: 'Apple Inc', shares: 10, currency: 'USD' },
+          { ticker: 'MSFT', name: 'Microsoft Corporation', shares: 10, currency: 'USD' },
+          { ticker: 'JNJ', name: 'Johnson & Johnson', shares: 10, currency: 'USD' },
+        ],
+      };
+      localStorage.setItem('dividends-portfolio', JSON.stringify(portfolio));
+    });
 
-    // Wait for the page to fully load and show the empty portfolio state
+    // Reload to pick up the localStorage changes
+    await page.reload();
     await page.waitForLoadState('networkidle');
 
-    // Add example stocks
-    await page.getByRole('button', { name: /Add example stocks/i }).click();
-
-    // Wait for stocks to be added
+    // Wait for stocks to be visible
     await expect(page.getByText(/AAPL|MSFT|JNJ/)).toBeVisible({ timeout: 5000 });
 
     // Click analyze
