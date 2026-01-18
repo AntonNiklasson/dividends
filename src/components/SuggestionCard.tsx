@@ -38,13 +38,13 @@ export default function SuggestionCard({
     <Card className="p-4">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-lg">{stock.ticker}</span>
+          <p className="font-semibold truncate">{stock.name}</p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-sm text-muted-foreground">{stock.ticker}</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
               {stock.sector}
             </span>
           </div>
-          <p className="text-sm text-muted-foreground truncate">{stock.name}</p>
 
           <div className="mt-2 flex flex-wrap gap-1">
             {stock.typicalMonths.map((month) => {
