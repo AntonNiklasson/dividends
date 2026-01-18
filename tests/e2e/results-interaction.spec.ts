@@ -1,22 +1,29 @@
 import { test, expect } from '@playwright/test';
-import path from 'path';
 
 test.describe('Results Page Interaction', () => {
-  // Helper function to upload a file and navigate to results
-  async function uploadAndNavigateToResults(
+  // Helper function to add stocks and navigate to results
+  async function setupPortfolioAndNavigateToResults(
     page: import('@playwright/test').Page
   ) {
     await page.goto('/');
-    const filePath = path.join(process.cwd(), 'public', 'sample-portfolio.csv');
-    const fileInput = page.locator('input[type="file"]');
-    await fileInput.setInputFiles(filePath);
+
+    // Add example stocks
+    await page.getByRole('button', { name: /Add example stocks/i }).click();
+
+    // Wait for stocks to be added
+    await expect(page.getByText(/AAPL|MSFT|JNJ/)).toBeVisible({ timeout: 5000 });
+
+    // Click analyze
+    await page.getByRole('button', { name: /Analyze Dividends/i }).click();
+
+    // Wait for results page
     await expect(page).toHaveURL(/\/results/, { timeout: 30000 });
   }
 
   test('should switch between year tabs and show different data', async ({
     page,
   }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Verify 2026 tab is initially active
     await expect(page.getByRole('tab', { name: '2026' })).toHaveAttribute(
@@ -72,7 +79,7 @@ test.describe('Results Page Interaction', () => {
   });
 
   test('should expand and collapse month cards', async ({ page }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Wait for the page to fully load
     await page.waitForTimeout(2000);
@@ -136,7 +143,7 @@ test.describe('Results Page Interaction', () => {
   test('should allow expanding multiple month cards simultaneously', async ({
     page,
   }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Wait for page load
     await page.waitForTimeout(2000);
@@ -204,7 +211,7 @@ test.describe('Results Page Interaction', () => {
   test('should display stock payment details when expanded', async ({
     page,
   }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Wait for page load
     await page.waitForTimeout(2000);
@@ -268,7 +275,7 @@ test.describe('Results Page Interaction', () => {
   test('should maintain expanded state when switching tabs', async ({
     page,
   }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Wait for page load
     await page.waitForTimeout(2000);
@@ -345,7 +352,7 @@ test.describe('Results Page Interaction', () => {
   test('should display empty state for months with no dividends', async ({
     page,
   }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Look for months with no dividend payments
     const emptyStateText = page.getByText(
@@ -379,7 +386,7 @@ test.describe('Results Page Interaction', () => {
   });
 
   test('should show year total with correct formatting', async ({ page }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Wait for page load
     await page.waitForTimeout(1000);
@@ -403,7 +410,7 @@ test.describe('Results Page Interaction', () => {
   });
 
   test('should handle rapid tab switching', async ({ page }) => {
-    await uploadAndNavigateToResults(page);
+    await setupPortfolioAndNavigateToResults(page);
 
     // Rapidly switch between tabs
     await page.getByRole('tab', { name: '2027' }).click();
