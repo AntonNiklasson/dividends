@@ -35,13 +35,13 @@ export default function SuggestionCard({
     months.map((m) => MONTH_NAMES[m - 1]).join(', ');
 
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between gap-4">
+    <Card className="p-4 overflow-hidden">
+      <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <p className="font-semibold truncate">{stock.name}</p>
-          <div className="flex items-center gap-2 mt-0.5">
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             <span className="text-sm text-muted-foreground">{stock.ticker}</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground truncate">
               {stock.sector}
             </span>
           </div>
