@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import SuggestionCard from '@/components/SuggestionCard';
 import { analyzeLowMonths } from '@/lib/analyzeLowMonths';
 import { suggestStocks } from '@/lib/suggestStocks';
@@ -33,6 +34,7 @@ export default function DividendSuggestionsSection({
   existingTickers,
 }: DividendSuggestionsSectionProps) {
   const router = useRouter();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const { lowMonths, average } = useMemo(
     () => analyzeLowMonths(projection),
@@ -40,9 +42,15 @@ export default function DividendSuggestionsSection({
   );
 
   const suggestions = useMemo(
+    // refreshKey is used to trigger re-randomization
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     () => suggestStocks(lowMonths, existingTickers, 5),
-    [lowMonths, existingTickers]
+    [lowMonths, existingTickers, refreshKey]
   );
+
+  const handleRefresh = useCallback(() => {
+    setRefreshKey((k) => k + 1);
+  }, []);
 
   // Don't render if there are no low months or no suggestions
   if (lowMonths.length === 0 || suggestions.length === 0) {
@@ -99,11 +107,22 @@ export default function DividendSuggestionsSection({
         ))}
       </div>
 
-      {/* Footer hint */}
-      <p className="mt-4 text-xs text-muted-foreground text-center">
-        Click &quot;Add&quot; to add a stock to your portfolio. Payment months
-        are based on historical patterns.
-      </p>
+      {/* Footer with refresh button */}
+      <div className="mt-4 flex flex-col items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleRefresh}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Show other suggestions
+        </Button>
+        <p className="text-xs text-muted-foreground text-center">
+          Click &quot;Add&quot; to add a stock to your portfolio. Payment months
+          are based on historical patterns.
+        </p>
+      </div>
     </section>
   );
 }

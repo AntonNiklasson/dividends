@@ -5,8 +5,21 @@ export interface SuggestedStockWithCoverage extends SuggestedStock {
 }
 
 /**
+ * Fisher-Yates shuffle algorithm
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/**
  * Suggests stocks that pay dividends in the specified low months.
- * Filters out stocks already in the portfolio and sorts by coverage.
+ * Filters out stocks already in the portfolio and returns a randomized
+ * selection that still prefers stocks with better coverage.
  */
 export function suggestStocks(
   lowMonths: number[],
@@ -40,8 +53,26 @@ export function suggestStocks(
     ),
   }));
 
-  // Sort by coverage (most low months covered first)
-  withCoverage.sort((a, b) => b.coveredMonths.length - a.coveredMonths.length);
+  // Group by coverage level, shuffle within each group, then flatten
+  // This maintains preference for better-covering stocks while adding randomness
+  const coverageGroups = new Map<number, SuggestedStockWithCoverage[]>();
 
-  return withCoverage.slice(0, maxResults);
+  for (const stock of withCoverage) {
+    const coverage = stock.coveredMonths.length;
+    if (!coverageGroups.has(coverage)) {
+      coverageGroups.set(coverage, []);
+    }
+    coverageGroups.get(coverage)!.push(stock);
+  }
+
+  // Sort coverage levels descending and shuffle within each group
+  const sortedCoverageLevels = [...coverageGroups.keys()].sort((a, b) => b - a);
+
+  const shuffledResults: SuggestedStockWithCoverage[] = [];
+  for (const level of sortedCoverageLevels) {
+    const group = coverageGroups.get(level)!;
+    shuffledResults.push(...shuffleArray(group));
+  }
+
+  return shuffledResults.slice(0, maxResults);
 }
