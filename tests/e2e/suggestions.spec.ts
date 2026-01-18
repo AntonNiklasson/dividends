@@ -1,9 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Stock Suggestions', () => {
+  // Clear localStorage before each test to ensure clean state
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => localStorage.clear());
+  });
+
   // Helper to add stocks and analyze
   async function setupPortfolioAndAnalyze(page: import('@playwright/test').Page) {
     await page.goto('/');
+
+    // Wait for the page to fully load and show the empty portfolio state
+    await page.waitForLoadState('networkidle');
 
     // Add example stocks
     await page.getByRole('button', { name: /Add example stocks/i }).click();
