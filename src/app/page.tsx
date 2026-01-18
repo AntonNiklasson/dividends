@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import PortfolioView from '@/components/PortfolioView';
 
 export default function Home() {
@@ -10,7 +11,9 @@ export default function Home() {
           automatic reinvestment
         </p>
       </div>
-      <PortfolioView />
+      <Suspense>
+        <PortfolioView />
+      </Suspense>
     </div>
   );
 }
