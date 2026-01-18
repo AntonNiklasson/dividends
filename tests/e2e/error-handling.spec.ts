@@ -194,7 +194,7 @@ Microsoft,MSFT,5`;
 
       // Verify the alert component is visible
       // Use a more specific selector to avoid the Next.js route announcer
-      const alert = page.getByText('Upload Failed').locator('..');
+      const alert = page.getByText('Upload Failed').first().locator('..');
       await expect(alert).toBeVisible();
 
       // Verify alert has AlertCircle icon (destructive variant)

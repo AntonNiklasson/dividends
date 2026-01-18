@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import type { PersistedPortfolio, PersistedStock } from '@/lib/types';
+import { getRandomExampleStocks } from '@/lib/exampleStocks';
 
 const STORAGE_KEY = 'dividends-portfolio';
 
@@ -78,12 +79,12 @@ export const clearPortfolioAtom = atom(null, (get, set) => {
   });
 });
 
-// Action: Add example stocks
+// Action: Add example stocks (4-7 random stocks from the pool)
 export const addExampleStocksAtom = atom(null, (get, set) => {
   const portfolio = get(persistedPortfolioAtom);
-  const existingTickers = new Set(portfolio.stocks.map((s) => s.ticker));
+  const existingTickers = portfolio.stocks.map((s) => s.ticker);
 
-  const newStocks = DEFAULT_STOCKS.filter((s) => !existingTickers.has(s.ticker));
+  const newStocks = getRandomExampleStocks(4, 7, existingTickers);
   set(persistedPortfolioAtom, {
     ...portfolio,
     stocks: [...portfolio.stocks, ...newStocks],

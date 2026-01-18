@@ -25,7 +25,7 @@ test.describe('Results Page Interaction', () => {
     );
 
     // Capture the year total for 2026
-    const total2026Element = page.getByText(/Total for 2026/i);
+    const total2026Element = page.getByText(/Total for 2026/i).first();
     await expect(total2026Element).toBeVisible();
     const total2026Text = await total2026Element
       .locator('..')
@@ -44,7 +44,7 @@ test.describe('Results Page Interaction', () => {
     );
 
     // Verify 2027 total is displayed
-    const total2027Element = page.getByText(/Total for 2027/i);
+    const total2027Element = page.getByText(/Total for 2027/i).first();
     await expect(total2027Element).toBeVisible();
     const total2027Text = await total2027Element
       .locator('..')
@@ -231,8 +231,8 @@ test.describe('Results Page Interaction', () => {
     await page.waitForTimeout(500);
 
     // Check if any payment details are visible
-    const sharesText = page.getByText(/\d+\.\d+\s+shares/);
-    const sharesCount = await sharesText.count();
+    const sharesTextLocator = page.getByText(/\d+\.\d+\s+shares/);
+    const sharesCount = await sharesTextLocator.count();
 
     // If no shares found, skip test (month may be empty)
     if (sharesCount === 0) {
@@ -397,6 +397,7 @@ test.describe('Results Page Interaction', () => {
     // It should be in a card with specific styling
     const yearTotalSection = page
       .locator('text=/Total for 2026/i')
+      .first()
       .locator('..');
     await expect(yearTotalSection).toBeVisible();
   });
