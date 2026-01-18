@@ -10,6 +10,11 @@ Pick an open GitHub issue, understand it, plan a solution, implement it, and cre
 
 Run `gh issue list --state open --search "-linked:pr"` to list open issues without existing PRs. Pick one. Prefer bugs over features, well-defined over vague. Tell the user which issue you picked.
 
+**Skip blocked issues:** Before picking, check if an issue is blocked:
+1. Run `gh api repos/{owner}/{repo}/issues/{number} --jq '.issue_dependencies_summary.blocked_by'` - skip if > 0
+2. Run `gh issue view {number} --json body,comments` and scan for "blocked by" patterns in body/comments
+3. If blocked, add the `blocked` label and move to the next issue
+
 ## Step 2: Understand the Issue
 
 1. Run `gh issue view <number>` for full details
