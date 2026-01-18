@@ -15,8 +15,11 @@ export function calculateProjection(
 ): ProjectionResponse {
   // Initialize share tracking for DRIP
   const shareTracker: Map<string, number> = new Map();
+  // Track unspent cash per stock (remainder after buying whole shares)
+  const cashTracker: Map<string, number> = new Map();
   for (const stock of stocks) {
     shareTracker.set(stock.ticker, stock.initialShares);
+    cashTracker.set(stock.ticker, 0);
   }
 
   // Project dividends for current year + 2 more
@@ -25,7 +28,7 @@ export function calculateProjection(
 
   const result: ProjectionResponse = {};
   for (const year of years) {
-    result[year] = projectYear(stocks, year, shareTracker);
+    result[year] = projectYear(stocks, year, shareTracker, cashTracker);
   }
 
   return result;
@@ -37,7 +40,8 @@ export function calculateProjection(
 function projectYear(
   stocks: StockWithDividends[],
   year: number,
-  shareTracker: Map<string, number>
+  shareTracker: Map<string, number>,
+  cashTracker: Map<string, number>
 ): YearProjection {
   // Initialize 12 months
   const months: MonthProjection[] = Array.from({ length: 12 }, (_, i) => ({
@@ -119,8 +123,14 @@ function projectYear(
     yearTotal.USD += dividendAmountUSD;
 
     // DRIP: Calculate new shares purchased with dividend (in original currency)
-    const newShares = dividendAmountOriginal / event.stock.currentPrice;
+    // Only buy whole shares, track remainder cash for future reinvestment
+    const currentCash = cashTracker.get(event.stock.ticker) || 0;
+    const totalCash = currentCash + dividendAmountOriginal;
+    const newShares = Math.floor(totalCash / event.stock.currentPrice);
+    const remainderCash = totalCash - newShares * event.stock.currentPrice;
+
     shareTracker.set(event.stock.ticker, currentShares + newShares);
+    cashTracker.set(event.stock.ticker, remainderCash);
   }
 
   return {
