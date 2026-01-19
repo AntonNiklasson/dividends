@@ -5,9 +5,9 @@ import { useAtom, useSetAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import StockListItem from './StockListItem';
-import StockSearch from './StockSearch';
-import ErrorBanner from './ErrorBanner';
+import { StockListItem } from './StockListItem';
+import { StockSearch } from './StockSearch';
+import { ErrorBanner } from './ErrorBanner';
 import {
   persistedPortfolioAtom,
   addStockAtom,
@@ -24,7 +24,7 @@ import type { AnalyzeResponse, FrequencyInfo, PersistedStock } from '@/lib/types
 import { Plus, Trash2, Upload, TrendingUp, Loader2, Sparkles } from 'lucide-react';
 import { parseCsv } from '@/lib/parseCsv';
 
-export default function PortfolioView() {
+export function PortfolioView() {
   const [portfolio] = useAtom(persistedPortfolioAtom);
   const addStock = useSetAtom(addStockAtom);
   const removeStock = useSetAtom(removeStockAtom);

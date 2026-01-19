@@ -13,7 +13,7 @@ interface StockListItemProps {
   frequencyInfo?: FrequencyInfo;
 }
 
-export default function StockListItem({
+export function StockListItem({
   stock,
   onUpdateShares,
   onDelete,

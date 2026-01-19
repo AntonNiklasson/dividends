@@ -23,7 +23,7 @@ interface StockSearchProps {
   onClose: () => void;
 }
 
-export default function StockSearch({ onAdd, onClose }: StockSearchProps) {
+export function StockSearch({ onAdd, onClose }: StockSearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);

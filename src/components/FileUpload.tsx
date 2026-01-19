@@ -21,7 +21,7 @@ import type { AnalyzeResponse } from '@/lib/types';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export default function FileUpload() {
+export function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useAtom(uploadAtom);
   const setPortfolio = useSetAtom(portfolioAtom);

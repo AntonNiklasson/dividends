@@ -9,7 +9,7 @@ interface ErrorBannerProps {
   noDividendStocks: StockWithDividends[];
 }
 
-export default function ErrorBanner({
+export function ErrorBanner({
   tickerErrors,
   noDividendStocks,
 }: ErrorBannerProps) {

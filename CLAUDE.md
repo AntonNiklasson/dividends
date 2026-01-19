@@ -33,6 +33,11 @@ npm run e2e      # E2E tests (Playwright)
 - UI primitives in `src/components/ui/` (shadcn/ui style)
 - Feature components directly in `src/components/`
 
+### Exports
+- Use named exports (not default exports)
+- Exceptions: Next.js pages/layouts and config files require default exports
+- ESLint enforces this via `import/no-default-export`
+
 ## Testing
 
 ### Unit Tests
