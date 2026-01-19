@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import DividendBarChart from '@/components/DividendBarChart';
-import MonthDetails from '@/components/MonthDetails';
+import { DividendBarChart } from '@/components/DividendBarChart';
+import { MonthDetails } from '@/components/MonthDetails';
 import type { YearProjection } from '@/lib/types';
 
 interface YearSectionProps {
@@ -10,7 +10,7 @@ interface YearSectionProps {
   data: YearProjection;
 }
 
-export default function YearSection({ year, data }: YearSectionProps) {
+export function YearSection({ year, data }: YearSectionProps) {
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   const selectedMonthData = selectedMonth

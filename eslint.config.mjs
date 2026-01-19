@@ -29,6 +29,20 @@ const eslintConfig = defineConfig([
       'prefer-const': 'error',
       // No console.log in production code
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      // Prefer named exports over default exports
+      'import/no-default-export': 'error',
+    },
+  },
+  // Allow default exports for Next.js pages, layouts, and config files
+  {
+    files: [
+      'src/app/**/page.tsx',
+      'src/app/**/layout.tsx',
+      '*.config.ts',
+      '*.config.mjs',
+    ],
+    rules: {
+      'import/no-default-export': 'off',
     },
   },
 ]);

@@ -3,7 +3,7 @@
 import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
-import YearSection from '@/components/YearSection';
+import { YearSection } from '@/components/YearSection';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';

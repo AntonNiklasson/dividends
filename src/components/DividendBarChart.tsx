@@ -32,7 +32,7 @@ const MONTH_NAMES = [
   'Dec',
 ];
 
-export default function DividendBarChart({
+export function DividendBarChart({
   months,
   selectedMonth,
   onMonthSelect,

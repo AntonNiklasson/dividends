@@ -26,7 +26,7 @@ const MONTH_NAMES = [
   'December',
 ];
 
-export default function MonthDetails({ monthData, onClose }: MonthDetailsProps) {
+export function MonthDetails({ monthData, onClose }: MonthDetailsProps) {
   const monthName = MONTH_NAMES[monthData.month - 1];
   const hasPayments = monthData.payments.length > 0;
 
