@@ -72,13 +72,13 @@ export function PortfolioSelector() {
       </div>
 
       {isOpen && !isResultsPage && (
-        <Card className="absolute right-0 top-full mt-2 w-64 z-50 p-1 shadow-lg">
+        <Card className="absolute right-0 top-full mt-2 w-64 z-50 p-1.5 shadow-lg">
           <div className="max-h-64 overflow-y-auto">
             {allPortfolios.map((portfolio) => (
               <button
                 key={portfolio.id}
                 onClick={() => handleSwitch(portfolio.id)}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent text-left"
+                className="w-full flex items-center gap-3 px-2.5 py-2 text-sm rounded-md hover:bg-accent text-left"
               >
                 <span className="w-4 h-4 shrink-0 flex items-center justify-center">
                   {portfolio.id === activePortfolio.id && (
@@ -86,22 +86,22 @@ export function PortfolioSelector() {
                   )}
                 </span>
                 <span className="truncate flex-1">{portfolio.name}</span>
-                <span className="text-muted-foreground text-xs">
-                  {portfolio.stocks.length} stock{portfolio.stocks.length !== 1 ? 's' : ''}
+                <span className="text-muted-foreground text-xs tabular-nums">
+                  {portfolio.stocks.length}
                 </span>
               </button>
             ))}
           </div>
 
-          <div className="border-t mt-1 pt-1">
-            <button
-              onClick={handleCreateNew}
-              className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent text-left text-muted-foreground hover:text-foreground"
-            >
-              <Plus className="w-4 h-4" />
-              <span>New Portfolio</span>
-            </button>
-          </div>
+          <div className="border-t my-1.5" />
+
+          <button
+            onClick={handleCreateNew}
+            className="w-full flex items-center gap-3 px-2.5 py-2 text-sm rounded-md hover:bg-accent text-left text-muted-foreground hover:text-foreground"
+          >
+            <Plus className="w-4 h-4 shrink-0" />
+            <span>New Portfolio</span>
+          </button>
         </Card>
       )}
     </div>

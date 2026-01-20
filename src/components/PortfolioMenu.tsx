@@ -11,7 +11,7 @@ import {
   deletePortfolioAtom,
   duplicatePortfolioAtom,
 } from '@/store/persistedPortfolioAtom';
-import { MoreHorizontal, Pencil, Copy, Trash2, Share2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Copy, Trash2 } from 'lucide-react';
 
 export function PortfolioMenu() {
   const activePortfolio = useAtomValue(activePortfolioAtom);
@@ -24,7 +24,6 @@ export function PortfolioMenu() {
   const [isRenaming, setIsRenaming] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [newName, setNewName] = useState('');
-  const [shareMessage, setShareMessage] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,21 +77,6 @@ export function PortfolioMenu() {
     setIsOpen(false);
   };
 
-  const handleShare = () => {
-    const portfolioData = {
-      name: activePortfolio.name,
-      stocks: activePortfolio.stocks,
-    };
-    const encoded = btoa(JSON.stringify(portfolioData));
-    const url = `${window.location.origin}${window.location.pathname}?import=${encoded}`;
-
-    navigator.clipboard.writeText(url).then(() => {
-      setShareMessage('Link copied to clipboard!');
-      setTimeout(() => setShareMessage(null), 2000);
-    });
-    setIsOpen(false);
-  };
-
   return (
     <div className="relative" ref={menuRef}>
       <Button
@@ -104,14 +88,8 @@ export function PortfolioMenu() {
         <MoreHorizontal className="w-4 h-4" />
       </Button>
 
-      {shareMessage && (
-        <div className="absolute right-0 top-full mt-2 px-3 py-2 bg-primary text-primary-foreground text-sm rounded-md shadow-lg whitespace-nowrap z-50">
-          {shareMessage}
-        </div>
-      )}
-
       {isOpen && (
-        <Card className="absolute right-0 top-full mt-2 w-56 z-50 p-1 shadow-lg">
+        <Card className="absolute right-0 top-full mt-2 w-48 z-50 p-1.5 shadow-lg">
           {isRenaming ? (
             <div className="p-2">
               <input
@@ -123,7 +101,7 @@ export function PortfolioMenu() {
                   if (e.key === 'Enter') handleRename();
                   if (e.key === 'Escape') setIsRenaming(false);
                 }}
-                className="w-full px-2 py-1 text-sm border rounded-md bg-background"
+                className="w-full px-2.5 py-1.5 text-sm border rounded-md bg-background"
                 placeholder="Portfolio name"
               />
               <div className="flex gap-2 mt-2">
@@ -141,7 +119,7 @@ export function PortfolioMenu() {
               </div>
             </div>
           ) : isDeleting ? (
-            <div className="p-3">
+            <div className="p-2">
               <p className="text-sm mb-3">
                 Delete &quot;{activePortfolio.name}&quot;? This cannot be undone.
               </p>
@@ -168,43 +146,35 @@ export function PortfolioMenu() {
             <>
               <button
                 onClick={startRenaming}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent text-left"
+                className="w-full flex items-center gap-3 px-2.5 py-2 text-sm rounded-md hover:bg-accent text-left"
               >
-                <Pencil className="w-4 h-4" />
+                <Pencil className="w-4 h-4 shrink-0" />
                 <span>Rename</span>
               </button>
 
               <button
                 onClick={handleDuplicate}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent text-left"
+                className="w-full flex items-center gap-3 px-2.5 py-2 text-sm rounded-md hover:bg-accent text-left"
               >
-                <Copy className="w-4 h-4" />
+                <Copy className="w-4 h-4 shrink-0" />
                 <span>Duplicate</span>
               </button>
 
-              <button
-                onClick={handleShare}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent text-left"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>Share</span>
-              </button>
-
-              <div className="border-t my-1" />
+              <div className="border-t my-1.5" />
 
               <button
                 onClick={() => setIsDeleting(true)}
                 disabled={!canDelete}
-                className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md text-left ${
+                className={`w-full flex items-center gap-3 px-2.5 py-2 text-sm rounded-md text-left ${
                   canDelete
                     ? 'text-destructive hover:bg-destructive/10'
                     : 'text-muted-foreground cursor-not-allowed'
                 }`}
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4 shrink-0" />
                 <span>Delete</span>
                 {!canDelete && (
-                  <span className="text-xs ml-auto">(last portfolio)</span>
+                  <span className="text-xs ml-auto">(last)</span>
                 )}
               </button>
             </>

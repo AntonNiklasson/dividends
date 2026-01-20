@@ -385,31 +385,3 @@ export const updateFrequencyAtom = atom(
   }
 );
 
-// Action: Import a complete portfolio (for sharing feature)
-export const importPortfolioAtom = atom(
-  null,
-  (get, set, portfolio: PersistedPortfolio) => {
-    const collection = get(portfolioCollectionAtom);
-
-    // Check if a portfolio with this name already exists
-    const existingNames = collection.portfolios.map((p) => p.name.toLowerCase());
-    let name = portfolio.name;
-    let counter = 1;
-    while (existingNames.includes(name.toLowerCase())) {
-      name = `${portfolio.name} (${counter})`;
-      counter++;
-    }
-
-    const newPortfolio: PersistedPortfolio = {
-      id: generateId(),
-      name,
-      stocks: portfolio.stocks,
-    };
-
-    set(portfolioCollectionAtom, {
-      portfolios: [...collection.portfolios, newPortfolio],
-      activePortfolioId: newPortfolio.id,
-    });
-    return newPortfolio.id;
-  }
-);
