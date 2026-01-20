@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import YahooFinance from 'yahoo-finance2';
 import { cache, CACHE_KEYS } from '@/lib/cache';
+import { cleanStockName } from '@/lib/utils';
 
 interface SearchQuote {
   symbol?: string;
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
       .filter((q) => q.quoteType === 'EQUITY' || q.quoteType === 'ETF')
       .map((q) => ({
         symbol: q.symbol || '',
-        name: q.shortname || q.longname || q.symbol || '',
+        name: cleanStockName(q.shortname || q.longname || q.symbol || ''),
         exchange: q.exchange || '',
       }));
 
