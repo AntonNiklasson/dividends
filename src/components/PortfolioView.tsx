@@ -199,7 +199,7 @@ export function PortfolioView() {
       <Card className="w-full max-w-2xl">
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
-            <CardTitle>My Portfolio</CardTitle>
+            <CardTitle>{portfolio.name}</CardTitle>
             <span className="text-sm text-muted-foreground">
               {portfolio.stocks.length} stock{portfolio.stocks.length !== 1 ? 's' : ''}
             </span>

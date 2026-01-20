@@ -1,5 +1,4 @@
 import type { PersistedStock } from '@/lib/types';
-import { cleanStockName } from '@/lib/utils';
 
 export interface ExampleStock {
   ticker: string;
@@ -149,7 +148,7 @@ export function getRandomExampleStocks(
   // Convert to PersistedStock format
   return selected.map((stock) => ({
     ticker: stock.ticker,
-    name: cleanStockName(stock.name),
+    name: stock.name,
     shares: Math.floor(Math.random() * 41) + 10, // Random 10-50
     currency: stock.currency,
   }));
