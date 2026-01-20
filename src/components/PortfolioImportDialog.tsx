@@ -3,39 +3,37 @@
 import { useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSetAtom } from 'jotai';
+import { z } from 'zod';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { importPortfolioAtom } from '@/store/persistedPortfolioAtom';
-import type { PersistedPortfolio, PersistedStock } from '@/lib/types';
+import type { PersistedPortfolio } from '@/lib/types';
 import { Download, X } from 'lucide-react';
 
-interface ImportedPortfolioData {
-  name: string;
-  stocks: PersistedStock[];
-}
+const PersistedStockSchema = z.object({
+  ticker: z.string(),
+  name: z.string(),
+  shares: z.number(),
+  currency: z.string(),
+  frequencyInfo: z
+    .object({
+      frequency: z.enum(['monthly', 'quarterly', 'semi-annual', 'annual', 'irregular']),
+      months: z.array(z.number()),
+    })
+    .optional(),
+});
+
+const ImportedPortfolioSchema = z.object({
+  name: z.string(),
+  stocks: z.array(PersistedStockSchema),
+});
+
+type ImportedPortfolioData = z.infer<typeof ImportedPortfolioSchema>;
 
 type ParseResult =
   | { type: 'none' }
   | { type: 'error'; message: string }
   | { type: 'success'; data: ImportedPortfolioData };
-
-function isValidImportData(data: unknown): data is ImportedPortfolioData {
-  if (typeof data !== 'object' || data === null) return false;
-  const obj = data as Record<string, unknown>;
-
-  if (typeof obj.name !== 'string') return false;
-  if (!Array.isArray(obj.stocks)) return false;
-
-  return obj.stocks.every(
-    (stock: unknown) =>
-      typeof stock === 'object' &&
-      stock !== null &&
-      typeof (stock as Record<string, unknown>).ticker === 'string' &&
-      typeof (stock as Record<string, unknown>).name === 'string' &&
-      typeof (stock as Record<string, unknown>).shares === 'number' &&
-      typeof (stock as Record<string, unknown>).currency === 'string'
-  );
-}
 
 function parseImportParam(importParam: string | null): ParseResult {
   if (!importParam) {
@@ -45,12 +43,13 @@ function parseImportParam(importParam: string | null): ParseResult {
   try {
     const decoded = atob(importParam);
     const parsed = JSON.parse(decoded);
+    const result = ImportedPortfolioSchema.safeParse(parsed);
 
-    if (!isValidImportData(parsed)) {
+    if (!result.success) {
       return { type: 'error', message: 'Invalid portfolio data' };
     }
 
-    return { type: 'success', data: parsed };
+    return { type: 'success', data: result.data };
   } catch {
     return { type: 'error', message: 'Failed to decode portfolio data' };
   }

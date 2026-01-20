@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { usePathname } from 'next/navigation';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import {
@@ -18,9 +19,13 @@ export function PortfolioSelector() {
   const allPortfolios = useAtomValue(allPortfoliosAtom);
   const switchPortfolio = useSetAtom(switchPortfolioAtom);
   const createPortfolio = useSetAtom(createPortfolioAtom);
+  const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Disable switching on results page
+  const isResultsPage = pathname === '/results';
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -49,21 +54,24 @@ export function PortfolioSelector() {
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
-          onClick={() => setIsOpen(!isOpen)}
-          className="min-w-[180px] justify-between"
+          onClick={() => !isResultsPage && setIsOpen(!isOpen)}
+          className={`min-w-[180px] justify-between ${isResultsPage ? 'cursor-default' : ''}`}
+          disabled={isResultsPage}
         >
           <span className="flex items-center gap-2 truncate">
             <FolderOpen className="w-4 h-4 shrink-0" />
             <span className="truncate">{activePortfolio.name}</span>
           </span>
-          <ChevronDown
-            className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          />
+          {!isResultsPage && (
+            <ChevronDown
+              className={`w-4 h-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            />
+          )}
         </Button>
-        <PortfolioMenu />
+        {!isResultsPage && <PortfolioMenu />}
       </div>
 
-      {isOpen && (
+      {isOpen && !isResultsPage && (
         <Card className="absolute right-0 top-full mt-2 w-64 z-50 p-1 shadow-lg">
           <div className="max-h-64 overflow-y-auto">
             {allPortfolios.map((portfolio) => (
