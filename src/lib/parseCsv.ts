@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import type { AvanzaRow, ParsedPortfolio, PortfolioStock } from './types';
+import { cleanStockName } from './utils';
 
 /**
  * Parse Swedish decimal format (comma separator) to JS number
@@ -93,7 +94,7 @@ export function parseCsv(csvContent: string): ParsedPortfolio {
       // Add stock to portfolio
       stocks.push({
         ticker,
-        name: name || ticker,
+        name: cleanStockName(name || ticker),
         shares,
         currency: currency || 'SEK',
         isin: isin || '',
