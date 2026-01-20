@@ -27,6 +27,12 @@ export interface PersistedPortfolio {
   stocks: PersistedStock[];
 }
 
+// Collection of portfolios with active selection
+export interface PortfolioCollection {
+  portfolios: PersistedPortfolio[];
+  activePortfolioId: string;
+}
+
 // Avanza CSV row structure
 export interface AvanzaRow {
   Kontonummer: string;
