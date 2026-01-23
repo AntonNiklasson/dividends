@@ -5,12 +5,12 @@ See [README.md](./README.md) for project overview, features, and structure.
 ## Quick Commands
 
 ```bash
-npm run dev      # Start dev server (port 4000)
-npm run build    # Production build
-npm run lint     # ESLint
-npm run format   # Prettier
-npm test         # Unit tests (Vitest)
-npm run e2e      # E2E tests (Playwright)
+npm run dev               # Start dev server (port 4000)
+npm run build             # Production build
+npm run lint              # ESLint
+npm run format            # Prettier
+npm test                  # Unit tests (Vitest)
+npm run test:integration  # Integration tests (Playwright)
 ```
 
 ## Code Patterns
@@ -44,9 +44,10 @@ npm run e2e      # E2E tests (Playwright)
 - Co-located with source: `*.test.ts` next to implementation
 - Run specific file: `npm test -- src/lib/cache.test.ts`
 
-### E2E Tests
-- Located in `tests/e2e/`
-- Tests require dev server running or use `webServer` config in playwright.config.ts
+### Integration Tests
+- Located in `tests/integration/`
+- Browser tests using Playwright
+- Uses `webServer` config to auto-start dev server
 
 ## External Data
 
