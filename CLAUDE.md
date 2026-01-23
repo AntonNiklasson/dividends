@@ -7,7 +7,8 @@ See [README.md](./README.md) for project overview, features, and structure.
 ```bash
 npm run dev               # Start dev server (port 4000)
 npm run build             # Production build
-npm run lint              # ESLint
+npm run lint              # Fast lint (oxlint)
+npm run lint:strict       # Full lint (ESLint)
 npm run format            # Prettier
 npm test                  # Unit tests (Vitest)
 npm run test:integration  # Integration tests (Playwright)

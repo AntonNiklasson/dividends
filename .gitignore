@@ -15,6 +15,9 @@
 /test-results
 /playwright-report
 
+# linting
+.eslintcache
+
 # next.js
 /.next/
 /out/

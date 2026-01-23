@@ -7,6 +7,24 @@ on:
     branches: [main]
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint:strict
+
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -23,10 +41,10 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: npm test -- --run
+        run: npm test
 
-  e2e:
-    name: E2E Tests
+  integration:
+    name: Integration Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,8 +61,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run e2e tests
-        run: npm run e2e
+      - name: Run integration tests
+        run: npm run test:integration
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
