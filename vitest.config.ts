@@ -7,8 +7,20 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: [],
-    exclude: ['**/node_modules/**', '**/tests/e2e/**'],
+    setupFiles: ['./vitest.setup.ts'],
+    exclude: ['**/node_modules/**', '**/tests/integration/**'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: ['src/**/*.ts', 'src/**/*.tsx'],
+      exclude: [
+        '**/*.test.ts',
+        '**/*.d.ts',
+        'src/components/ui/**',
+        'src/app/**/layout.tsx',
+        'src/app/**/page.tsx',
+      ],
+    },
   },
   resolve: {
     alias: {
