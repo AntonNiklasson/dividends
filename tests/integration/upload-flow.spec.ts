@@ -1,161 +1,87 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-test.describe('Successful Upload Flow', () => {
-  test('should upload valid CSV file and display results', async ({ page }) => {
-    // Navigate to home page
+// Run tests serially to avoid localStorage conflicts
+test.describe.configure({ mode: 'serial' });
+
+// Helper to import CSV and handle the dialog
+async function importCSV(page: import('@playwright/test').Page) {
+  const filePath = path.join(process.cwd(), 'public', 'sample-portfolio.csv');
+  const fileInput = page.locator('input#csv-import');
+  await fileInput.setInputFiles(filePath);
+
+  // Handle import dialog if it appears
+  const replaceButton = page.getByRole('button', { name: 'Replace all' });
+  try {
+    await replaceButton.waitFor({ state: 'visible', timeout: 2000 });
+    await replaceButton.click();
+  } catch {
+    // Dialog didn't appear, continue
+  }
+
+  // Wait for stocks to load
+  await expect(page.getByText('Apple')).toBeVisible({ timeout: 5000 });
+}
+
+test.describe('Portfolio Flow', () => {
+  test.beforeEach(async ({ page }) => {
+    // Clear localStorage before each test
     await page.goto('/');
-
-    // Verify upload page loads
-    await expect(
-      page.getByRole('heading', { name: 'Dividend Portfolio Projector' })
-    ).toBeVisible();
-    await expect(page.getByText('Upload Your Portfolio')).toBeVisible();
-
-    // Upload sample portfolio file
-    const filePath = path.join(process.cwd(), 'public', 'sample-portfolio.csv');
-
-    // Find the hidden file input and upload the file
-    const fileInput = page.locator('input[type="file"]');
-    await fileInput.setInputFiles(filePath);
-
-    // Wait for the upload and processing to complete
-    // The app should show a loading state and then navigate to results
-    await expect(page).toHaveURL(/\/results/, { timeout: 30000 });
-
-    // Verify results page loaded successfully
-    await expect(
-      page.getByRole('heading', { name: 'Dividend Projection' })
-    ).toBeVisible();
-
-    // Verify year tabs are present
-    await expect(page.getByRole('tab', { name: '2026' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: '2027' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: '2028' })).toBeVisible();
-
-    // Verify 2026 tab is active by default
-    await expect(page.getByRole('tab', { name: '2026' })).toHaveAttribute(
-      'data-state',
-      'active'
-    );
-
-    // Verify month cards are displayed (at least January)
-    // Month names are displayed in CardTitle (not semantic heading)
-    await expect(
-      page.getByText('January', { exact: true }).first()
-    ).toBeVisible();
-
-    // Verify total dividend display exists
-    await expect(page.getByText(/Total for 2026/i)).toBeVisible();
-
-    // Verify "Upload new file" button exists
-    await expect(
-      page.getByRole('button', { name: /upload new file/i })
-    ).toBeVisible();
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
   });
 
-  test('should display data for all three years', async ({ page }) => {
-    // Navigate and upload
+  test('should import CSV and display stocks in portfolio', async ({ page }) => {
     await page.goto('/');
 
-    const filePath = path.join(process.cwd(), 'public', 'sample-portfolio.csv');
-    const fileInput = page.locator('input[type="file"]');
-    await fileInput.setInputFiles(filePath);
-
-    // Wait for results page
-    await expect(page).toHaveURL(/\/results/, { timeout: 30000 });
-
-    // Check 2026 (already active)
     await expect(
-      page.getByText('January', { exact: true }).first()
+      page.getByRole('heading', { name: 'Build Your Portfolio' })
     ).toBeVisible();
-    const total2026 = await page
-      .getByText(/Total for 2026/i)
-      .first()
-      .textContent();
-    expect(total2026).toBeTruthy();
 
-    // Switch to 2027 tab
-    await page.getByRole('tab', { name: '2027' }).click();
-    await expect(
-      page.getByText('January', { exact: true }).first()
-    ).toBeVisible();
-    const total2027 = await page
-      .getByText(/Total for 2027/i)
-      .first()
-      .textContent();
-    expect(total2027).toBeTruthy();
+    await importCSV(page);
 
-    // Switch to 2028 tab
-    await page.getByRole('tab', { name: '2028' }).click();
-    await expect(
-      page.getByText('January', { exact: true }).first()
-    ).toBeVisible();
-    const total2028 = await page
-      .getByText(/Total for 2028/i)
-      .first()
-      .textContent();
-    expect(total2028).toBeTruthy();
+    await expect(page.getByText('Microsoft')).toBeVisible();
+    await expect(page.getByText(/\d+ stocks?/).first()).toBeVisible();
   });
 
-  test('should show expandable month details', async ({ page }) => {
-    // Navigate and upload
+  test('should add stocks manually via search', async ({ page }) => {
     await page.goto('/');
 
-    const filePath = path.join(process.cwd(), 'public', 'sample-portfolio.csv');
-    const fileInput = page.locator('input[type="file"]');
-    await fileInput.setInputFiles(filePath);
+    await page.getByRole('button', { name: 'Add Stock' }).click();
 
-    // Wait for results page
-    await expect(page).toHaveURL(/\/results/, { timeout: 30000 });
+    const searchInput = page.getByPlaceholder(/search/i);
+    await expect(searchInput).toBeVisible();
 
-    // Find a month card with dividend data
-    // We'll look for any month that has a chevron/expand button
-    const expandButtons = page
-      .locator('[data-testid*="expand"], button')
-      .filter({
-        hasText: /chevron|expand|▼|▶/i,
-      });
-
-    if ((await expandButtons.count()) > 0) {
-      // Click the first expand button
-      await expandButtons.first().click();
-
-      // Wait a moment for expansion animation
-      await page.waitForTimeout(300);
-
-      // Verify some stock details are now visible
-      // Stock payment rows should have ticker, amount, date, shares
-      const detailsVisible =
-        (await page.getByText(/shares/i).count()) > 0 ||
-        (await page.getByText(/\d{4}-\d{2}-\d{2}/).count()) > 0;
-
-      expect(detailsVisible).toBe(true);
-    }
+    // Close dialog
+    await page.keyboard.press('Escape');
   });
 
-  test('should allow navigation back to upload page', async ({ page }) => {
-    // Navigate and upload
+  test('should persist portfolio in localStorage', async ({ page }) => {
     await page.goto('/');
+    await importCSV(page);
 
-    const filePath = path.join(process.cwd(), 'public', 'sample-portfolio.csv');
-    const fileInput = page.locator('input[type="file"]');
-    await fileInput.setInputFiles(filePath);
+    await page.reload();
 
-    // Wait for results page
-    await expect(page).toHaveURL(/\/results/, { timeout: 30000 });
+    await expect(page.getByText('Apple')).toBeVisible({ timeout: 5000 });
+  });
 
-    // Click "Upload new file" button
-    const uploadButton = page.getByRole('button', {
-      name: /upload new file/i,
-    });
-    await uploadButton.click();
+  test('should clear portfolio', async ({ page }) => {
+    await page.goto('/');
+    await importCSV(page);
 
-    // Verify we're back on the home page
-    await expect(page).toHaveURL('/');
-    await expect(
-      page.getByRole('heading', { name: 'Dividend Portfolio Projector' })
-    ).toBeVisible();
-    await expect(page.getByText('Upload Your Portfolio')).toBeVisible();
+    await page.getByRole('button', { name: 'Clear' }).click();
+    await expect(page.getByText(/Clear Portfolio/i)).toBeVisible();
+
+    await page.getByRole('button', { name: /Clear All/i }).click();
+    await expect(page.getByText('Your portfolio is empty')).toBeVisible();
+  });
+
+  test('should show Analyze button when stocks are loaded', async ({ page }) => {
+    await page.goto('/');
+    await importCSV(page);
+
+    const analyzeButton = page.getByRole('button', { name: /Analyze Dividends/i });
+    await expect(analyzeButton).toBeVisible();
+    await expect(analyzeButton).toBeEnabled();
   });
 });
