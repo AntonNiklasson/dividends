@@ -385,3 +385,24 @@ export const updateFrequencyAtom = atom(
   }
 );
 
+// Action: Update price for a stock in active portfolio
+export const updatePriceAtom = atom(
+  null,
+  (get, set, { ticker, currentPrice }: { ticker: string; currentPrice: number }) => {
+    const collection = get(portfolioCollectionAtom);
+    set(portfolioCollectionAtom, {
+      ...collection,
+      portfolios: collection.portfolios.map((p) =>
+        p.id === collection.activePortfolioId
+          ? {
+              ...p,
+              stocks: p.stocks.map((s) =>
+                s.ticker === ticker ? { ...s, currentPrice } : s
+              ),
+            }
+          : p
+      ),
+    });
+  }
+);
+

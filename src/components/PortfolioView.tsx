@@ -18,11 +18,13 @@ import {
   replaceStocksAtom,
   addExampleStocksAtom,
   updateFrequencyAtom,
+  updatePriceAtom,
 } from '@/store/persistedPortfolioAtom';
 import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
 import type { AnalyzeResponse, FrequencyInfo, PersistedStock } from '@/lib/types';
 import { Plus, Trash2, Upload, TrendingUp, Loader2, Sparkles } from 'lucide-react';
 import { parseCsv } from '@/lib/parseCsv';
+import { convertToUSD } from '@/lib/exchangeRates';
 
 export function PortfolioView() {
   const [portfolio] = useAtom(persistedPortfolioAtom);
@@ -34,6 +36,7 @@ export function PortfolioView() {
   const replaceStocks = useSetAtom(replaceStocksAtom);
   const addExampleStocks = useSetAtom(addExampleStocksAtom);
   const updateFrequency = useSetAtom(updateFrequencyAtom);
+  const updatePrice = useSetAtom(updatePriceAtom);
   const setPortfolioData = useSetAtom(portfolioAtom);
   const setPortfolioLoading = useSetAtom(portfolioLoadingAtom);
   const portfolioData = useAtomValue(portfolioAtom);
@@ -51,25 +54,39 @@ export function PortfolioView() {
     }
   });
 
-  // Auto-fetch frequency for stocks that don't have it
+  // Auto-fetch frequency and price for stocks that don't have them
   useEffect(() => {
-    const stocksMissingFrequency = portfolio.stocks.filter((s) => !s.frequencyInfo);
-    if (stocksMissingFrequency.length === 0) return;
+    const stocksMissingData = portfolio.stocks.filter(
+      (s) => !s.frequencyInfo || s.currentPrice === undefined
+    );
+    if (stocksMissingData.length === 0) return;
 
-    stocksMissingFrequency.forEach(async (stock) => {
+    stocksMissingData.forEach(async (stock) => {
       try {
         const res = await fetch(
           `/api/dividend-info?ticker=${encodeURIComponent(stock.ticker)}`
         );
         const data = await res.json();
-        if (data.frequencyInfo) {
+        if (data.frequencyInfo && !stock.frequencyInfo) {
           updateFrequency({ ticker: stock.ticker, frequencyInfo: data.frequencyInfo });
         }
+        if (data.currentPrice !== undefined && stock.currentPrice === undefined) {
+          updatePrice({ ticker: stock.ticker, currentPrice: data.currentPrice });
+        }
       } catch {
-        // Ignore errors - frequency is optional
+        // Ignore errors - frequency and price are optional for display
       }
     });
-  }, [portfolio.stocks, updateFrequency]);
+  }, [portfolio.stocks, updateFrequency, updatePrice]);
+
+  // Calculate total portfolio value in USD
+  const totalPortfolioValue = portfolio.stocks.reduce((sum, stock) => {
+    if (stock.currentPrice === undefined) return sum;
+    const valueInOriginalCurrency = stock.shares * stock.currentPrice;
+    return sum + convertToUSD(valueInOriginalCurrency, stock.currency);
+  }, 0);
+
+  const hasAllPrices = portfolio.stocks.every((s) => s.currentPrice !== undefined);
 
   const [showSearch, setShowSearch] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -200,9 +217,16 @@ export function PortfolioView() {
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
             <CardTitle>{portfolio.name}</CardTitle>
-            <span className="text-sm text-muted-foreground">
-              {portfolio.stocks.length} stock{portfolio.stocks.length !== 1 ? 's' : ''}
-            </span>
+            <div className="text-right">
+              {portfolio.stocks.length > 0 && hasAllPrices && (
+                <p className="text-lg font-semibold">
+                  ${totalPortfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              )}
+              <span className="text-sm text-muted-foreground">
+                {portfolio.stocks.length} stock{portfolio.stocks.length !== 1 ? 's' : ''}
+              </span>
+            </div>
           </div>
         </CardHeader>
 

@@ -29,6 +29,8 @@ export function calculateProjection(
   const result: ProjectionResponse = {};
   for (const year of years) {
     result[year] = projectYear(stocks, year, shareTracker, cashTracker);
+    // Snapshot share counts at end of year
+    result[year].endOfYearShares = Object.fromEntries(shareTracker);
   }
 
   return result;

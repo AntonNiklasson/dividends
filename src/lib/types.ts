@@ -18,6 +18,7 @@ export interface PersistedStock {
   shares: number;
   currency: string;
   frequencyInfo?: FrequencyInfo;
+  currentPrice?: number;
 }
 
 // Persisted portfolio structure
@@ -117,6 +118,7 @@ export interface MonthProjection {
 export interface YearProjection {
   months: MonthProjection[];
   yearTotal: Record<string, number>; // Currency -> total amount
+  endOfYearShares?: Record<string, number>; // Ticker -> share count at year end
 }
 
 // Full projection response (dynamic years)

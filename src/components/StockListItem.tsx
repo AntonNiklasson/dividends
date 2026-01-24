@@ -46,6 +46,11 @@ export function StockListItem({
         <p className="font-medium truncate">{stock.name}</p>
         <div className="flex items-center gap-2">
           <p className="text-sm text-muted-foreground">{stock.ticker}</p>
+          {stock.currentPrice !== undefined && (
+            <span className="text-xs text-muted-foreground">
+              ${stock.currentPrice.toFixed(2)}
+            </span>
+          )}
           {frequencyInfo && frequencyInfo.months.length > 0 && (
             <span className="text-xs text-muted-foreground">
               {formatFrequency(frequencyInfo)}
@@ -74,12 +79,19 @@ export function StockListItem({
             </Button>
           </div>
         ) : (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="text-sm font-medium px-2 py-1 rounded hover:bg-muted transition-colors"
-          >
-            {stock.shares} shares
-          </button>
+          <div className="text-right">
+            {stock.currentPrice !== undefined && (
+              <p className="text-sm font-medium">
+                ${(stock.shares * stock.currentPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+            )}
+            <button
+              onClick={() => setIsEditing(true)}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {stock.shares} shares
+            </button>
+          </div>
         )}
 
         <Button

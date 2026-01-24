@@ -7,6 +7,7 @@ export interface DividendInfoResponse {
   ticker: string;
   frequencyInfo: FrequencyInfo | null;
   hasDividends: boolean;
+  currentPrice?: number;
   error?: string;
 }
 
@@ -41,6 +42,7 @@ export async function GET(request: NextRequest) {
       ticker,
       frequencyInfo,
       hasDividends,
+      currentPrice: result.currentPrice,
     } satisfies DividendInfoResponse);
   } catch (error) {
     console.error('Dividend info fetch error:', error);

@@ -359,5 +359,67 @@ describe('API /api/analyze integration flow', () => {
       // CHF should not exist - converted to USD
       expect(projection[currentYear].yearTotal.CHF).toBeUndefined();
     });
+
+    it('should populate endOfYearShares for portfolio tracking', async () => {
+      const mockDividendData: StockWithDividends[] = [
+        {
+          ticker: 'AAPL',
+          name: 'Apple',
+          initialShares: 50,
+          currency: 'USD',
+          currentPrice: 185.5,
+          hasDividends: true,
+          dividendSchedule: [
+            { month: 2, day: 15, amount: 0.24 },
+            { month: 5, day: 15, amount: 0.24 },
+            { month: 8, day: 15, amount: 0.24 },
+            { month: 11, day: 15, amount: 0.24 },
+          ],
+        },
+      ];
+
+      const projection = calculateProjection(mockDividendData);
+      const currentYear = new Date().getFullYear();
+
+      // Each year should have endOfYearShares
+      expect(projection[currentYear].endOfYearShares).toBeDefined();
+      expect(projection[currentYear + 1].endOfYearShares).toBeDefined();
+      expect(projection[currentYear + 2].endOfYearShares).toBeDefined();
+
+      // AAPL should be in endOfYearShares
+      expect(projection[currentYear].endOfYearShares!['AAPL']).toBeDefined();
+      expect(projection[currentYear].endOfYearShares!['AAPL']).toBeGreaterThanOrEqual(50);
+    });
+
+    it('should show share accumulation over years with DRIP', async () => {
+      const mockDividendData: StockWithDividends[] = [
+        {
+          ticker: 'AAPL',
+          name: 'Apple',
+          initialShares: 100,
+          currency: 'USD',
+          currentPrice: 10, // Low price for easy DRIP calculation
+          hasDividends: true,
+          dividendSchedule: [
+            { month: 3, day: 15, amount: 1.0 }, // $1 dividend = $100 total = 10 new shares
+            { month: 6, day: 15, amount: 1.0 },
+            { month: 9, day: 15, amount: 1.0 },
+            { month: 12, day: 15, amount: 1.0 },
+          ],
+        },
+      ];
+
+      const projection = calculateProjection(mockDividendData);
+      const currentYear = new Date().getFullYear();
+
+      const year1Shares = projection[currentYear].endOfYearShares!['AAPL'];
+      const year2Shares = projection[currentYear + 1].endOfYearShares!['AAPL'];
+      const year3Shares = projection[currentYear + 2].endOfYearShares!['AAPL'];
+
+      // Shares should increase each year due to DRIP
+      expect(year1Shares).toBeGreaterThan(100); // Started with 100
+      expect(year2Shares).toBeGreaterThan(year1Shares);
+      expect(year3Shares).toBeGreaterThan(year2Shares);
+    });
   });
 });
