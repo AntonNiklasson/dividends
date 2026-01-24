@@ -1,4 +1,5 @@
 ---
+name: fresh
 description: Jump back to main and pull latest changes
 ---
 

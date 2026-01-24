@@ -188,5 +188,55 @@ describe('portfolioValue utilities', () => {
       // 110 * 100 SEK * 0.095 = 1045 USD
       expect(result).toBeCloseTo(1045, 0);
     });
+
+    it('should apply price multiplier for bullish scenario', () => {
+      const singleStock: StockWithDividends[] = [stocks[0]]; // Just AAPL
+      const endOfYearShares = { AAPL: 10 };
+
+      // +10% per year, 2 years = 1.1^2 = 1.21
+      const result = calculateYearEndValue(singleStock, endOfYearShares, 1.1, 2);
+
+      // 10 * 100 * 1.21 = 1210
+      expect(result).toBeCloseTo(1210, 0);
+    });
+
+    it('should apply price multiplier for bearish scenario', () => {
+      const singleStock: StockWithDividends[] = [stocks[0]]; // Just AAPL
+      const endOfYearShares = { AAPL: 10 };
+
+      // -10% per year, 2 years = 0.9^2 = 0.81
+      const result = calculateYearEndValue(singleStock, endOfYearShares, 0.9, 2);
+
+      // 10 * 100 * 0.81 = 810
+      expect(result).toBeCloseTo(810, 0);
+    });
+
+    it('should compound price changes correctly over 3 years', () => {
+      const singleStock: StockWithDividends[] = [
+        {
+          ticker: 'TEST',
+          name: 'Test Stock',
+          initialShares: 100,
+          currency: 'USD',
+          currentPrice: 100,
+          hasDividends: true,
+          dividendSchedule: [],
+        },
+      ];
+
+      const endOfYearShares = { TEST: 100 };
+
+      // +10% for 3 years = 1.1^3 = 1.331
+      const bullish = calculateYearEndValue(singleStock, endOfYearShares, 1.1, 3);
+      expect(bullish).toBeCloseTo(13310, 0); // 100 * 100 * 1.331
+
+      // Flat = no change
+      const flat = calculateYearEndValue(singleStock, endOfYearShares, 1, 3);
+      expect(flat).toBe(10000); // 100 * 100
+
+      // -10% for 3 years = 0.9^3 = 0.729
+      const bearish = calculateYearEndValue(singleStock, endOfYearShares, 0.9, 3);
+      expect(bearish).toBeCloseTo(7290, 0); // 100 * 100 * 0.729
+    });
   });
 });

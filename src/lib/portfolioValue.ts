@@ -58,17 +58,22 @@ export function calculatePortfolioValue(stocks: StockWithDividends[]): Portfolio
 
 /**
  * Calculate portfolio value at end of year using DRIP share counts
- * Uses current prices (not future prices) to show DRIP accumulation effect
+ * @param priceMultiplier - Apply annual price change (e.g., 1.1 for +10%, 0.9 for -10%)
+ * @param yearsFromNow - Number of years to compound the price multiplier
  */
 export function calculateYearEndValue(
   stocks: StockWithDividends[],
-  endOfYearShares: Record<string, number>
+  endOfYearShares: Record<string, number>,
+  priceMultiplier = 1,
+  yearsFromNow = 0
 ): number {
   let totalUSD = 0;
+  const compoundedMultiplier = Math.pow(priceMultiplier, yearsFromNow);
 
   for (const stock of stocks) {
     const shares = endOfYearShares[stock.ticker] ?? stock.initialShares;
-    const valueInOriginal = shares * stock.currentPrice;
+    const adjustedPrice = stock.currentPrice * compoundedMultiplier;
+    const valueInOriginal = shares * adjustedPrice;
     totalUSD += convertToUSD(valueInOriginal, stock.currency);
   }
 

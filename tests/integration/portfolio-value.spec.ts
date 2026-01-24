@@ -306,9 +306,9 @@ test.describe('Results Page Portfolio Summary', () => {
     await expect(page.getByRole('heading', { name: 'Dividend Projection' })).toBeVisible({ timeout: 10000 });
 
     // Growth chart should be visible
-    await expect(page.getByText('Portfolio Growth (DRIP)')).toBeVisible();
+    await expect(page.getByText('Portfolio Growth Scenarios')).toBeVisible();
 
-    // Chart description should be visible
-    await expect(page.getByText(/reinvesting dividends/i)).toBeVisible();
+    // Legend should show scenario labels
+    await expect(page.getByText('+10%/year')).toBeVisible();
   });
 });
