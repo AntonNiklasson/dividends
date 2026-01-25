@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
         ticker,
         frequencyInfo: null,
         hasDividends: false,
+        currentPrice: result.currentPrice,
         error: result.error,
       } satisfies DividendInfoResponse);
     }
