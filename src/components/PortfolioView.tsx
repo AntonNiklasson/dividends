@@ -70,8 +70,12 @@ export function PortfolioView() {
         if (data.frequencyInfo && !stock.frequencyInfo) {
           updateFrequency({ ticker: stock.ticker, frequencyInfo: data.frequencyInfo });
         }
-        if (data.currentPrice !== undefined && stock.currentPrice === undefined) {
-          updatePrice({ ticker: stock.ticker, currentPrice: data.currentPrice });
+        if (data.currentPrice !== undefined || data.hasDividends !== undefined) {
+          updatePrice({
+            ticker: stock.ticker,
+            ...(data.currentPrice !== undefined && stock.currentPrice === undefined && { currentPrice: data.currentPrice }),
+            ...(data.hasDividends !== undefined && stock.hasDividends === undefined && { hasDividends: data.hasDividends }),
+          });
         }
       } catch {
         // Ignore errors - frequency and price are optional for display

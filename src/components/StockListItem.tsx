@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { Trash2, Check, X } from 'lucide-react';
+import { Trash2, Check, X, AlertTriangle } from 'lucide-react';
 import type { PersistedStock, FrequencyInfo } from '@/lib/types';
 import { formatFrequency } from '@/lib/dividendFrequency';
 
@@ -43,7 +43,15 @@ export function StockListItem({
   return (
     <div className="flex items-center justify-between py-3 px-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors">
       <div className="flex-1 min-w-0">
-        <p className="font-medium truncate">{stock.name}</p>
+        <div className="flex items-center gap-2">
+          <p className="font-medium truncate">{stock.name}</p>
+          {stock.hasDividends === false && (
+            <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-500" title="No dividend history">
+              <AlertTriangle className="w-3 h-3" />
+              <span className="hidden sm:inline">No dividends</span>
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <p className="text-sm text-muted-foreground">{stock.ticker}</p>
           {stock.currentPrice !== undefined && (

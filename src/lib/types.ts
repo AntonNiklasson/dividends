@@ -19,6 +19,7 @@ export interface PersistedStock {
   currency: string;
   frequencyInfo?: FrequencyInfo;
   currentPrice?: number;
+  hasDividends?: boolean;
 }
 
 // Persisted portfolio structure

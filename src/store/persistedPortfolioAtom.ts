@@ -385,10 +385,14 @@ export const updateFrequencyAtom = atom(
   }
 );
 
-// Action: Update price for a stock in active portfolio
-export const updatePriceAtom = atom(
+// Action: Update price and dividend status for a stock in active portfolio
+export const updateStockInfoAtom = atom(
   null,
-  (get, set, { ticker, currentPrice }: { ticker: string; currentPrice: number }) => {
+  (
+    get,
+    set,
+    { ticker, currentPrice, hasDividends }: { ticker: string; currentPrice?: number; hasDividends?: boolean }
+  ) => {
     const collection = get(portfolioCollectionAtom);
     set(portfolioCollectionAtom, {
       ...collection,
@@ -397,7 +401,13 @@ export const updatePriceAtom = atom(
           ? {
               ...p,
               stocks: p.stocks.map((s) =>
-                s.ticker === ticker ? { ...s, currentPrice } : s
+                s.ticker === ticker
+                  ? {
+                      ...s,
+                      ...(currentPrice !== undefined && { currentPrice }),
+                      ...(hasDividends !== undefined && { hasDividends }),
+                    }
+                  : s
               ),
             }
           : p
@@ -405,4 +415,7 @@ export const updatePriceAtom = atom(
     });
   }
 );
+
+// Legacy alias - use updateStockInfoAtom instead
+export const updatePriceAtom = updateStockInfoAtom;
 
