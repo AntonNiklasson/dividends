@@ -100,7 +100,7 @@ export default function ResultsPage() {
 
         {/* Portfolio Growth Chart */}
         {stocks.length > 0 && (
-          <PortfolioGrowthChart stocks={stocks} projection={projection} />
+          <PortfolioGrowthChart stocks={stocks} />
         )}
 
         {/* Vertical scroll of year sections */}

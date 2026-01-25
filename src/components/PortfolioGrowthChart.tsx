@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import {
   LineChart,
   Line,
@@ -10,12 +11,12 @@ import {
   Legend,
 } from 'recharts';
 import { Card } from './ui/card';
-import type { StockWithDividends, ProjectionResponse } from '@/lib/types';
+import type { StockWithDividends } from '@/lib/types';
 import { calculatePortfolioValue, calculateYearEndValue } from '@/lib/portfolioValue';
+import { calculateProjection } from '@/lib/calculateProjection';
 
 interface PortfolioGrowthChartProps {
   stocks: StockWithDividends[];
-  projection: ProjectionResponse;
 }
 
 interface ChartDataPoint {
@@ -25,11 +26,21 @@ interface ChartDataPoint {
   bearish: number;
 }
 
-export function PortfolioGrowthChart({ stocks, projection }: PortfolioGrowthChartProps) {
+export function PortfolioGrowthChart({ stocks }: PortfolioGrowthChartProps) {
   const currentValue = calculatePortfolioValue(stocks);
-  const years = Object.keys(projection).map(Number).sort((a, b) => a - b);
+
+  // Calculate separate projections for each price scenario
+  // Each has different DRIP share purchases based on price trajectory
+  const { flatProjection, bullishProjection, bearishProjection } = useMemo(() => ({
+    flatProjection: calculateProjection(stocks, 0),
+    bullishProjection: calculateProjection(stocks, 0.1),
+    bearishProjection: calculateProjection(stocks, -0.1),
+  }), [stocks]);
+
+  const years = Object.keys(flatProjection).map(Number).sort((a, b) => a - b);
 
   // Build data points with all three scenarios
+  // Each scenario uses its own share counts from DRIP calculations
   const chartData: ChartDataPoint[] = [
     {
       label: 'Now',
@@ -38,15 +49,18 @@ export function PortfolioGrowthChart({ stocks, projection }: PortfolioGrowthChar
       bearish: currentValue.totalUSD,
     },
     ...years.map((year, index) => {
-      const yearData = projection[year];
-      const endOfYearShares = yearData.endOfYearShares || {};
       const yearsFromNow = index + 1;
+
+      // Use each scenario's endOfYearShares for proper DRIP effect
+      const flatShares = flatProjection[year].endOfYearShares || {};
+      const bullishShares = bullishProjection[year].endOfYearShares || {};
+      const bearishShares = bearishProjection[year].endOfYearShares || {};
 
       return {
         label: `${year}`,
-        bullish: calculateYearEndValue(stocks, endOfYearShares, 1.1, yearsFromNow),
-        flat: calculateYearEndValue(stocks, endOfYearShares, 1, yearsFromNow),
-        bearish: calculateYearEndValue(stocks, endOfYearShares, 0.9, yearsFromNow),
+        bullish: calculateYearEndValue(stocks, bullishShares, 1.1, yearsFromNow),
+        flat: calculateYearEndValue(stocks, flatShares, 1, yearsFromNow),
+        bearish: calculateYearEndValue(stocks, bearishShares, 0.9, yearsFromNow),
       };
     }),
   ];

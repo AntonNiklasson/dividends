@@ -9,9 +9,12 @@ import { convertToUSD } from './exchangeRates';
 
 /**
  * Calculate dividend projections for current year + next 2 years with DRIP reinvestment
+ * @param stocks - Array of stocks with dividend schedules
+ * @param annualPriceGrowth - Annual price growth rate (e.g., 0.1 for +10%/year, -0.1 for -10%/year)
  */
 export function calculateProjection(
-  stocks: StockWithDividends[]
+  stocks: StockWithDividends[],
+  annualPriceGrowth = 0
 ): ProjectionResponse {
   // Initialize share tracking for DRIP
   const shareTracker: Map<string, number> = new Map();
@@ -27,8 +30,10 @@ export function calculateProjection(
   const years = [currentYear, currentYear + 1, currentYear + 2];
 
   const result: ProjectionResponse = {};
-  for (const year of years) {
-    result[year] = projectYear(stocks, year, shareTracker, cashTracker);
+  for (let i = 0; i < years.length; i++) {
+    const year = years[i];
+    const yearIndex = i + 1; // 1, 2, 3 for price growth calculation
+    result[year] = projectYear(stocks, year, shareTracker, cashTracker, annualPriceGrowth, yearIndex);
     // Snapshot share counts at end of year
     result[year].endOfYearShares = Object.fromEntries(shareTracker);
   }
@@ -38,12 +43,16 @@ export function calculateProjection(
 
 /**
  * Project dividends for a single year with DRIP reinvestment
+ * @param annualPriceGrowth - Annual price growth rate (e.g., 0.1 for +10%/year)
+ * @param yearIndex - Which year this is (1, 2, 3) for calculating compounded price
  */
 function projectYear(
   stocks: StockWithDividends[],
   year: number,
   shareTracker: Map<string, number>,
-  cashTracker: Map<string, number>
+  cashTracker: Map<string, number>,
+  annualPriceGrowth: number,
+  yearIndex: number
 ): YearProjection {
   // Initialize 12 months
   const months: MonthProjection[] = Array.from({ length: 12 }, (_, i) => ({
@@ -126,10 +135,13 @@ function projectYear(
 
     // DRIP: Calculate new shares purchased with dividend (in original currency)
     // Only buy whole shares, track remainder cash for future reinvestment
+    // Apply price growth: price = basePrice * (1 + growth)^yearIndex
+    const adjustedPrice =
+      event.stock.currentPrice * Math.pow(1 + annualPriceGrowth, yearIndex);
     const currentCash = cashTracker.get(event.stock.ticker) || 0;
     const totalCash = currentCash + dividendAmountOriginal;
-    const newShares = Math.floor(totalCash / event.stock.currentPrice);
-    const remainderCash = totalCash - newShares * event.stock.currentPrice;
+    const newShares = Math.floor(totalCash / adjustedPrice);
+    const remainderCash = totalCash - newShares * adjustedPrice;
 
     shareTracker.set(event.stock.ticker, currentShares + newShares);
     cashTracker.set(event.stock.ticker, remainderCash);
