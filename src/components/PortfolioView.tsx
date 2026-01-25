@@ -80,13 +80,14 @@ export function PortfolioView() {
   }, [portfolio.stocks, updateFrequency, updatePrice]);
 
   // Calculate total portfolio value in USD
-  const totalPortfolioValue = portfolio.stocks.reduce((sum, stock) => {
-    if (stock.currentPrice === undefined) return sum;
-    const valueInOriginalCurrency = stock.shares * stock.currentPrice;
+  const stocksWithPrices = portfolio.stocks.filter((s) => s.currentPrice !== undefined);
+  const totalPortfolioValue = stocksWithPrices.reduce((sum, stock) => {
+    const valueInOriginalCurrency = stock.shares * stock.currentPrice!;
     return sum + convertToUSD(valueInOriginalCurrency, stock.currency);
   }, 0);
 
-  const hasAllPrices = portfolio.stocks.every((s) => s.currentPrice !== undefined);
+  const hasSomePrices = stocksWithPrices.length > 0;
+  const hasAllPrices = stocksWithPrices.length === portfolio.stocks.length;
 
   const [showSearch, setShowSearch] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -218,9 +219,10 @@ export function PortfolioView() {
           <div className="flex items-center justify-between">
             <CardTitle>{portfolio.name}</CardTitle>
             <div className="text-right">
-              {portfolio.stocks.length > 0 && hasAllPrices && (
+              {portfolio.stocks.length > 0 && hasSomePrices && (
                 <p className="text-lg font-semibold">
                   ${totalPortfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {!hasAllPrices && <span className="text-muted-foreground text-sm ml-1">+</span>}
                 </p>
               )}
               <span className="text-sm text-muted-foreground">
