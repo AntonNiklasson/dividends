@@ -498,4 +498,128 @@ describe('calculateProjection', () => {
       expect(result[YEAR_1].yearTotal.USD).toBe(100);
     });
   });
+
+  describe('price growth scenarios', () => {
+    // Stock setup: 100 shares at $100, $10 annual dividend
+    // This means each dividend can buy 10 shares at flat prices
+    const baseStock: StockWithDividends = {
+      ticker: 'TEST',
+      name: 'Test Company',
+      initialShares: 100,
+      currency: 'USD',
+      currentPrice: 100,
+      hasDividends: true,
+      dividendSchedule: [{ month: 6, day: 15, amount: 10.0 }], // $1000 dividend per year
+    };
+
+    it('should accept annualPriceGrowth parameter', () => {
+      const stocks = [baseStock];
+
+      // Should not throw with the new parameter
+      const flatResult = calculateProjection(stocks, 0);
+      const bullishResult = calculateProjection(stocks, 0.1);
+      const bearishResult = calculateProjection(stocks, -0.1);
+
+      expect(flatResult).toBeDefined();
+      expect(bullishResult).toBeDefined();
+      expect(bearishResult).toBeDefined();
+    });
+
+    it('should buy fewer shares when prices rise', () => {
+      const stocks = [baseStock];
+
+      const flatResult = calculateProjection(stocks, 0);
+      const bullishResult = calculateProjection(stocks, 0.1); // +10%/year
+
+      // Year 1 dividend is the same (based on shares, not price)
+      expect(flatResult[YEAR_1].yearTotal.USD).toBe(1000);
+      expect(bullishResult[YEAR_1].yearTotal.USD).toBe(1000);
+
+      // But with +10% prices, we buy fewer shares
+      // Flat: $1000 / $100 = 10 shares -> 110 total
+      // Bullish: $1000 / $110 = 9 shares -> 109 total
+      expect(flatResult[YEAR_1].endOfYearShares!['TEST']).toBe(110);
+      expect(bullishResult[YEAR_1].endOfYearShares!['TEST']).toBe(109);
+    });
+
+    it('should buy more shares when prices fall', () => {
+      const stocks = [baseStock];
+
+      const flatResult = calculateProjection(stocks, 0);
+      const bearishResult = calculateProjection(stocks, -0.1); // -10%/year
+
+      // Year 1 dividend is the same
+      expect(flatResult[YEAR_1].yearTotal.USD).toBe(1000);
+      expect(bearishResult[YEAR_1].yearTotal.USD).toBe(1000);
+
+      // With -10% prices, we buy more shares
+      // Flat: $1000 / $100 = 10 shares -> 110 total
+      // Bearish: $1000 / $90 = 11 shares -> 111 total
+      expect(flatResult[YEAR_1].endOfYearShares!['TEST']).toBe(110);
+      expect(bearishResult[YEAR_1].endOfYearShares!['TEST']).toBe(111);
+    });
+
+    it('should compound price changes over multiple years', () => {
+      const stocks = [baseStock];
+
+      const bullishResult = calculateProjection(stocks, 0.1);
+      const bearishResult = calculateProjection(stocks, -0.1);
+
+      // Year 2: prices are 1.1^2 = 1.21x (bullish) or 0.9^2 = 0.81x (bearish)
+      // Bullish Y1: 109 shares, Y2 dividend = 109 * $10 = $1090
+      //   Buy: $1090 / $121 = 9 shares -> 118 total
+      // Bearish Y1: 111 shares, Y2 dividend = 111 * $10 = $1110
+      //   Buy: $1110 / $81 = 13 shares -> 124 total
+
+      // The gap should widen each year
+      const bullishY2Shares = bullishResult[YEAR_2].endOfYearShares!['TEST'];
+      const bearishY2Shares = bearishResult[YEAR_2].endOfYearShares!['TEST'];
+
+      expect(bearishY2Shares).toBeGreaterThan(bullishY2Shares);
+
+      // Year 3 gap should be even wider
+      const bullishY3Shares = bullishResult[YEAR_3].endOfYearShares!['TEST'];
+      const bearishY3Shares = bearishResult[YEAR_3].endOfYearShares!['TEST'];
+
+      expect(bearishY3Shares - bullishY3Shares).toBeGreaterThan(
+        bearishY2Shares - bullishY2Shares
+      );
+    });
+
+    it('should keep dividend payout amounts the same across scenarios', () => {
+      const stocks = [baseStock];
+
+      const flatResult = calculateProjection(stocks, 0);
+      const bullishResult = calculateProjection(stocks, 0.1);
+      const bearishResult = calculateProjection(stocks, -0.1);
+
+      // Year 1: All start with 100 shares, so dividend is the same
+      expect(flatResult[YEAR_1].yearTotal.USD).toBe(1000);
+      expect(bullishResult[YEAR_1].yearTotal.USD).toBe(1000);
+      expect(bearishResult[YEAR_1].yearTotal.USD).toBe(1000);
+
+      // Year 2: Different share counts lead to different dividends
+      // Bullish has fewer shares (109), bearish has more (111)
+      expect(bullishResult[YEAR_2].yearTotal.USD).toBeLessThan(
+        bearishResult[YEAR_2].yearTotal.USD
+      );
+    });
+
+    it('should default to flat prices when no growth rate specified', () => {
+      const stocks = [baseStock];
+
+      const defaultResult = calculateProjection(stocks);
+      const explicitFlatResult = calculateProjection(stocks, 0);
+
+      expect(defaultResult[YEAR_1].endOfYearShares).toEqual(
+        explicitFlatResult[YEAR_1].endOfYearShares
+      );
+      expect(defaultResult[YEAR_2].endOfYearShares).toEqual(
+        explicitFlatResult[YEAR_2].endOfYearShares
+      );
+      expect(defaultResult[YEAR_3].endOfYearShares).toEqual(
+        explicitFlatResult[YEAR_3].endOfYearShares
+      );
+    });
+  });
 });

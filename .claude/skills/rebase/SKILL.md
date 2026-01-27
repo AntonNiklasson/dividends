@@ -1,4 +1,5 @@
 ---
+name: rebase
 description: Rebase the current feature branch on latest main
 ---
 

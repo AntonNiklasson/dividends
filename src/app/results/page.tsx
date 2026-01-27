@@ -4,10 +4,13 @@ import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { portfolioAtom, portfolioLoadingAtom } from '@/store/portfolioAtom';
 import { YearSection } from '@/components/YearSection';
+import { PortfolioSummary } from '@/components/PortfolioSummary';
+import { PortfolioGrowthChart } from '@/components/PortfolioGrowthChart';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft, Briefcase } from 'lucide-react';
+import { calculatePortfolioValue } from '@/lib/portfolioValue';
 
 export default function ResultsPage() {
   const portfolioData = useAtomValue(portfolioAtom);
@@ -64,7 +67,9 @@ export default function ResultsPage() {
     );
   }
 
-  const { projection } = portfolioData;
+  const { projection, portfolio } = portfolioData;
+  const stocks = portfolio?.stocks || [];
+  const portfolioValue = calculatePortfolioValue(stocks);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -90,6 +95,14 @@ export default function ResultsPage() {
       </header>
 
       <main>
+        {/* Portfolio Summary */}
+        <PortfolioSummary value={portfolioValue} />
+
+        {/* Portfolio Growth Chart */}
+        {stocks.length > 0 && (
+          <PortfolioGrowthChart stocks={stocks} />
+        )}
+
         {/* Vertical scroll of year sections */}
         {Object.keys(projection)
           .map(Number)

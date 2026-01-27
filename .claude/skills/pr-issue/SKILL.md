@@ -1,4 +1,5 @@
 ---
+name: pr-issue
 description: Pick a GitHub issue, plan and implement it, then create a PR
 ---
 
